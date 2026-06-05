@@ -4,253 +4,426 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Crash Simulator V3 - Realistické RP</title>
+    <!-- Google Fonts pro luxusní vzhled -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- EmailJS knihovna pro odesílání e-mailů -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        /* Základní styly a barvy */
+        /* --- PREMIUM GUI DESIGN SYSTEM --- */
+        :root {
+            --bg-base: #0a0c10;
+            --bg-surface: #131722;
+            --bg-card: #1c2333;
+            --primary: #ff3838;
+            --primary-glow: rgba(255, 56, 56, 0.4);
+            --secondary: #00d2d3;
+            --text-main: #f1f2f6;
+            --text-muted: #a4b0be;
+            --border-color: #2f3640;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #1a1a1a;
-            color: #f4f4f4;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Hlavička webu */
+        /* Animované pozadí hlavičky */
         header {
-            background: linear-gradient(135deg, #2c3e50, #000000);
-            padding: 30px 20px;
+            background: linear-gradient(180deg, rgba(19, 23, 34, 0.95) 0%, rgba(10, 12, 16, 1) 100%), 
+                        url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 20px;
             text-align: center;
-            border-bottom: 3px solid #ff4757;
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
         }
 
         header h1 {
-            font-size: 2.5rem;
-            color: #ffffff;
-            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-shadow: 0 0 20px var(--primary-glow);
+            margin-bottom: 10px;
         }
 
         header p {
-            color: #a4b0be;
-            font-size: 1.1rem;
+            color: var(--secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.3rem;
         }
 
-        /* Navigační menu */
+        /* Luxusní Herní Navigace */
         nav {
-            background-color: #2f3542;
+            background-color: var(--bg-surface);
             display: flex;
             justify-content: center;
+            gap: 10px;
+            padding: 15px;
             position: sticky;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
         }
 
         nav button {
-            background: none;
-            border: none;
-            color: #ffffff;
-            padding: 15px 25px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 12px 25px;
+            font-family: 'Orbitron', sans-serif;
             font-size: 1rem;
-            font-weight: bold;
+            font-weight: 700;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: 0.3s;
+            border-radius: 4px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        nav button:hover, nav button.active {
-            background-color: #ff4757;
-            color: white;
+        nav button:hover {
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background-color: rgba(255, 56, 56, 0.05);
         }
 
-        /* Obsah stránek */
+        nav button.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        /* Hlavní kontejner */
         .container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #2f3542;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
         .page {
-            display: none; /* Skryje stránky, které nejsou aktivní */
+            display: none;
+            background-color: var(--bg-surface);
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .page.active {
-            display: block; /* Ukáže aktivní stránku */
+            display: block;
+            animation: fadeIn 0.5s ease;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nadpisy */
         h2 {
-            color: #ff4757;
-            border-bottom: 2px solid #57606f;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 25px;
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+            text-transform: uppercase;
         }
 
         h3 {
-            margin: 20px 0 10px 0;
-            color: #ffa502;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin: 30px 0 15px 0;
+            color: var(--secondary);
+            text-transform: uppercase;
         }
 
         p {
-            margin-bottom: 15px;
-        }
-
-        /* Blokové citace (Upozornění) */
-        blockquote {
-            background-color: #3e444f;
-            border-left: 5px solid #ff4757;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 5px 5px 0;
-            font-style: italic;
-        }
-
-        /* Seznamy */
-        ul {
-            margin-left: 25px;
             margin-bottom: 20px;
+            color: var(--text-main);
         }
 
-        li {
+        /* Vylepšené karty s pravidly */
+        .rule-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .rule-card:hover {
+            border-color: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .rule-card strong {
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            display: block;
             margin-bottom: 5px;
+            font-size: 1.3rem;
         }
 
-        /* Tabulky pro MHD */
+        /* Discord tlačítko */
+        .btn-discord {
+            display: inline-block;
+            background: linear-gradient(135deg, #5865F2, #404eed);
+            color: white;
+            padding: 15px 35px;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+            transition: 0.3s;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-discord:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.6);
+        }
+
+        /* Tabulky */
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            background-color: #212529;
+            background-color: var(--bg-card);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
         th, td {
-            padding: 12px;
+            padding: 15px;
             text-align: left;
-            border: 1px solid #495057;
         }
 
         th {
-            background-color: #ff4757;
-            color: white;
+            background-color: rgba(255, 56, 56, 0.1);
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            border-bottom: 2px solid var(--primary);
         }
 
-        tr:nth-child(even) {
-            background-color: #2c3034;
+        tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: 0.2s;
         }
 
-        /* Tlačítka a odkazy */
-        .btn-discord {
-            display: inline-block;
-            background-color: #5865F2;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: 0.3s;
-            margin-top: 10px;
+        tr:hover {
+            background-color: rgba(0, 210, 211, 0.05);
         }
 
-        .btn-discord:hover {
-            background-color: #404eed;
-            transform: translateY(-2px);
+        /* Frakce */
+        .faction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
-        /* Sekce Frakcí */
-        .faction-group {
-            margin-bottom: 25px;
-            padding: 15px;
-            background-color: #3e444f;
+        .faction-box {
+            background-color: var(--bg-card);
+            padding: 25px;
             border-radius: 6px;
+            border-top: 4px solid var(--border-color);
         }
 
-        .faction-important { border-left: 5px solid #ff4757; }
-        .faction-transport { border-left: 5px solid #1e90ff; }
-        .faction-other { border-left: 5px solid #2ed573; }
+        .faction-box.important { border-top-color: var(--primary); }
+        .faction-box.transport { border-top-color: var(--secondary); }
+        .faction-box.other { border-top-color: #2ed573; }
+
+        .faction-box ul {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .faction-box li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .faction-box li::before {
+            content: "➔";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+        }
+
+        /* --- MODERNÍ KONTAKTNÍ FORMULÁŘ --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            border-radius: 6px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px var(--primary-glow);
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
 
         /* Patička */
         footer {
             text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            color: #747d8c;
-            font-size: 0.9rem;
-            border-top: 1px solid #2f3542;
+            padding: 40px;
+            margin-top: 60px;
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
 
+    <!-- HLAVIČKA -->
     <header>
         <h1>Car Crash Simulator V3</h1>
-        <p>Oficiální stránka pro realistický Roleplay | Zakladatelé: Já & Honza</p>
+        <p>Ultra-Realistický Roleplay server | Majitelé: Já & Honza</p>
     </header>
 
+    <!-- MENU -->
     <nav>
-        <button class="nav-btn active" onclick="openPage('info')">Info o RP</button>
-        <button class="nav-btn" onclick="openPage('doklady')">Potřebné údaje</button>
-        <button class="nav-btn" onclick="openPage('mhd')">Jízdní řády MHD</button>
+        <button class="nav-btn active" onclick="openPage('info')">Hlavní Info</button>
+        <button class="nav-btn" onclick="openPage('pravidla')">Kodex Pravidel</button>
+        <button class="nav-btn" onclick="openPage('doklady')">Doklady / Discord</button>
+        <button class="nav-btn" onclick="openPage('mhd')">MHD Trasy</button>
         <button class="nav-btn" onclick="openPage('frakce')">Frakce</button>
+        <button class="nav-btn" onclick="openPage('kontakt')">Nápady & Kontakt</button>
     </nav>
 
     <div class="container">
 
+        <!-- 1. STRÁNKA: INFO -->
         <div id="info" class="page active">
-            <h2>O našem projektu</h2>
-            <p>Vítáme vás na našem webu! Pokud hledáte místo, kde si v Roblox hře <strong>Car Crash Simulator V3</strong> užijete stoprocentně realistický Roleplay (RP), jste na správném místě.</p>
-            <p>Společně s Honzou se snažíme simulovat reálný život se vším, co k tomu patří – od dodržování dopravních předpisů až po zásahy integrovaného záchranného systému.</p>
-            
-            <blockquote>
-                <strong>Pravidlo č. 1:</strong> Vždy se chovejte tak, jak byste se chovali v reálném životě. Respektujte ostatní hráče a pravidla frakcí!
-            </blockquote>
-
-            <h3>Jak se zapojit?</h3>
-            <p>Stačí si přečíst pravidla, zařídit si potřebné doklady na našem Discordu a můžete vyrazit do ulic. Máte nápady nebo otázky? Napište nám na Discord nebo na náš e-mail!</p>
+            <h2>Projekt Realistického RP</h2>
+            <p>Vítej na webu naší dedikované RP komunity pro Roblox hru <strong>Car Crash Simulator V3</strong>. Náš projekt vznikl pod vedením mě a Honzy za jediným účelem: vytáhnout z této hry absolutní maximum realismu.</p>
+            <p>Zapomeň na bezhlavé narážení do zdí. Zde simulujeme reálnou ekonomiku, složky integrovaného záchranného systému, silniční kontroly a každodenní rutinu řidičů MHD i nákladních vozů.</p>
+            <h3>Jak začít?</h3>
+            <p>Přejdi do sekce <strong>Kodex pravidel</strong>, nastuduj si naše herní zákony, poté se napoj na náš Discord, kde ti schválíme občanku, a můžeš vyrazit rovnou na mapu!</p>
         </div>
 
+        <!-- 2. STRÁNKA: VÍCE PRAVIDEL -->
+        <div id="pravidla" class="page">
+            <h2>Kodex Pravidel pro Realistické RP</h2>
+            <p>Porušení jakéhokoliv z těchto pravidel se trestá vyhozením z RP akce Admin týmem.</p>
+            
+            <div class="rule-card">
+                <strong>1. Základní hodnota života (Value of Life)</strong>
+                Hráč musí jednat tak, jako by měl pouze jeden život. Je zakázáno dělat úmyslné čelní bouračky ve 200 km/h nebo skákat z mostů.
+            </div>
+            <div class="rule-card">
+                <strong>2. Realistická jízda & Předpisy</strong>
+                V obci platí přísný zákaz bezdůvodné rychlé jízdy. Na dálnici D1 se držte v pravém jízdním pruhu. Zastavení na červenou a dávání přednosti v jízdě je samozřejmostí.
+            </div>
+            <div class="rule-card">
+                <strong>3. Pravidlo autonehody (Crash RP)</strong>
+                Pokud bouráte, nesmíte okamžitě odjet! Musíte zastavit, vypnout motor, zapnout výstražná světla a simulovat zranění/zavolání IZS. Odejít od nehody bez vyřešení je zakázáno.
+            </div>
+            <div class="rule-card">
+                <strong>4. Zákaz FailRP a Non-RP Driving</strong>
+                Je zakázáno jezdit s osobním autem v těžkém terénu, kam nepatří (např. pláže, skály). Auta se chovají podle svých reálných limitů.
+            </div>
+            <div class="rule-card">
+                <strong>5. Interakce s Policií a IZS</strong>
+                Při výzvě policie k zastavení musíte okamžitě uposlechnout. Pokud projíždí IZS (hasiči/sanitka) se zapnutými majáky, máte povinnost jim uvolnit cestu.
+            </div>
+        </div>
+
+        <!-- 3. STRÁNKA: DOKLADY -->
         <div id="doklady" class="page">
-            <h2>Potřebné údaje a doklady</h2>
-            <p>Aby mohl být náš Roleplay opravdu realistický, nemůže do hry jen tak vletět kdokoli bez dokladů. Každý občan u nás musí mít své dokumenty.</p>
+            <h2>Potřebné Údaje k Hře</h2>
+            <p>Bez řádných dokumentů tě Policie při první kontrole zatkne a zabaví ti vozidlo. Pro plnohodnotné RP u sebe musíš mít:</p>
             
-            <h3>Co musíte mít pro hru:</h3>
-            <ul>
-                <li><strong>1. ID (Občanský průkaz)</strong> – Základní průkaz totožnosti.</li>
-                <li><strong>2. Řidičský průkaz</strong> – Bez něj legálně nesednete za volant.</li>
-                <li><strong>3. Zbrojní průkaz</strong> – Povinnost pro všechny členy Policie (případně speciální povolení).</li>
-            </ul>
+            <div class="rule-card"><strong>1. ID (Občanský průkaz)</strong> - Musí mít každý občan.</div>
+            <div class="rule-card"><strong>2. Řidičský průkaz</strong> - Nutný pro řízení jakéhokoliv vozidla.</div>
+            <div class="rule-card"><strong>3. Zbrojní průkaz</strong> - Povinný pro POLICII (civilisté ho běžně nesmí nosit).</div>
 
-            <blockquote>
-                <strong>Důležité upozornění:</strong> Všechny doklady jsou <strong>zcela nereálné (fiktivní)</strong> a slouží výhradně pro účely hry v Robloxu!
-            </blockquote>
-
-            <h3>Jak doklady získat?</h3>
-            <p>Doklady si uděláte na našem oficiálním komunikačním Discord serveru <strong>Official RP</strong>. Klikněte na tlačítko níže, připojte se a požádejte o jejich vydání.</p>
+            <h3 style="color: var(--primary);">⚠️ DŮLEŽITÉ UPOZORNĚNÍ</h3>
+            <p>Všechny tyto doklady jsou <strong>zcela NEREÁLNÉ (fiktivní)</strong>. Nikdy nikde nezadávejte své reálné osobní údaje! Doklady vám vystavíme výhradně u nás na komunikačním serveru.</p>
             
-            <a href="https://discord.gg/NhypZ2Se54" target="_blank" class="btn-discord">Připojit se na Discord (Official RP)</a>
+            <center>
+                <a href="https://discord.gg/NhypZ2Se54" target="_blank" class="btn-discord">Vytvořit doklady na Discordu</a>
+            </center>
         </div>
 
+        <!-- 4. STRÁNKA: MHD -->
         <div id="mhd" class="page">
-            <h2>Linky Městské Hromadné Dopravy (MHD)</h2>
-            <p>Pokud zrovna nemáte auto nebo řidičský průkaz, můžete po mapě cestovat pomocí našich autobusových linek.</p>
+            <h2>Linkové Jízdní Řády MHD</h2>
+            <p>Řidiči autobusů jsou povinni striktně dodržovat tyto stanovené trasy a zastavovat na každé zastávce.</p>
 
             <h3>🏙️ Mapa: City</h3>
             <table>
                 <tr>
-                    <th style="width: 20%;">Linka</th>
-                    <th>Trasa / Zastávky</th>
+                    <th style="width: 15%">Linka</th>
+                    <th>Oficiální Trasa linky</th>
                 </tr>
                 <tr>
-                    <td><strong>Linka 1</strong></td>
+                    <td><b style="color: var(--primary);">Linka 1</b></td>
                     <td>Spawn ➔ Sídliště ➔ Benzinka ➔ Dálnice D1</td>
                 </tr>
                 <tr>
-                    <td><strong>Linka 2</strong></td>
+                    <td><b style="color: var(--primary);">Linka 2</b></td>
                     <td>Spawn ➔ Sídliště ➔ Benzinka ➔ Sídliště ➔ Spawn</td>
                 </tr>
             </table>
@@ -258,74 +431,132 @@
             <h3>🌲 Mapa: CountrySide</h3>
             <table>
                 <tr>
-                    <th style="width: 20%;">Linka</th>
-                    <th>Trasa / Zastávky</th>
+                    <th style="width: 15%">Linka</th>
+                    <th>Oficiální Trasa linky</th>
                 </tr>
                 <tr>
-                    <td><strong>Linka 201</strong></td>
+                    <td><b style="color: var(--secondary);">Linka 201</b></td>
                     <td>Spawn ➔ Policejní stanice ➔ Autobusové stanoviště</td>
                 </tr>
                 <tr>
-                    <td><strong>Linka 202</strong></td>
+                    <td><b style="color: var(--secondary);">Linka 202</b></td>
                     <td>Spawn ➔ U Pláže ➔ Garáže u Kostela</td>
                 </tr>
             </table>
-            <p><em>Poznámka: Ostatní oblasti jsou aktuálně bez pevné mapy linek.</em></p>
+            <p style="font-style: italic; color: var(--text-muted); margin-top: 10px;">Poznámka: Oblasti mimo tyto vyznačené zóny jsou aktuálně vedeny jako bez mapy linek.</p>
         </div>
 
+        <!-- 5. STRÁNKA: FRAKCE -->
         <div id="frakce" class="page">
-            <h2>Frakce a Zaměstnání</h2>
-            <p>Chcete se aktivně zapojit do chodu města? Vyberte si jednu z našich oficiálních frakcí.</p>
-
-            <div class="faction-group faction-important">
-                <h3>⚠️ Důležité složky</h3>
-                <ul>
-                    <li><strong>IZS (Záchranka a Hasiči):</strong> Pomoc při nehodách, hašení požárů a záchrana životů.</li>
-                    <li><strong>Policie:</strong> Dohlížení na pořádek, silniční kontroly. Pro vstup k Policii <strong>musíte mít Zbrojní průkaz!</strong></li>
-                </ul>
+            <h2>Organizační Frakce</h2>
+            <div class="faction-grid">
+                <div class="faction-box important">
+                    <h3>🔴 Důležité</h3>
+                    <ul>
+                        <li><strong>IZS:</strong> Záchranná služba a hasičský sbor. Vyjíždějí k hlášeným nehodám.</li>
+                        <li><strong>Policie:</strong> Dohlíží na rychlost, kontroluje ID, Řidičáky. (Nutný zbrojní průkaz).</li>
+                    </ul>
+                </div>
+                <div class="faction-box transport">
+                    <h3>🔵 Dopravní</h3>
+                    <ul>
+                        <li><strong>MHD:</strong> Profesionální řidiči autobusů držící se linek.</li>
+                        <li><strong>Kamiony:</strong> Logistická přeprava těžkých nákladů na dlouhé trasy.</li>
+                    </ul>
+                </div>
+                <div class="faction-box other">
+                    <h3>🟢 Ostatní</h3>
+                    <ul>
+                        <li><strong>Autoškola:</strong> Provádění testů a praktických jízd pro nové hráče.</li>
+                        <li><strong>Admin:</strong> Zakladatelé (Já a Honza) a pověření správci dohlížející na pravidla.</li>
+                    </ul>
+                </div>
             </div>
+        </div>
 
-            <div class="faction-group faction-transport">
-                <h3>🚌 Dopravní složky</h3>
-                <ul>
-                    <li><strong>MHD:</strong> Řidiči autobusů jezdící na linkách podle jízdních řádů.</li>
-                    <li><strong>Kamiony:</strong> Přeprava nákladu a zásobování po celé mapě.</li>
-                </ul>
-            </div>
-
-            <div class="faction-group faction-other">
-                <h3>⚙️ Ostatní</h3>
-                <ul>
-                    <li><strong>Autoškola:</strong> Provádění autoškolských zkoušek a oficiální schvalování řidičáků.</li>
-                    <li><strong>Admin tým:</strong> Správa hry, dohled nad dodržováním pravidel RP.</li>
-                </ul>
-            </div>
+        <!-- 6. STRÁNKA: KONTAKT (REALISTICKÝ E-MAIL) -->
+        <div id="kontakt" class="page">
+            <h2>Odeslat nápad / Otázku na e-mail</h2>
+            <p>Máš skvělý nápad na novou linku MHD, vylepšení pravidel, nebo se chceš na něco zeptat mě a Honzy? Vyplň formulář níže a zpráva dorazí přímo na náš e-mail: <strong>milovnikmhd1234@gmail.com</strong>.</p>
+            
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="user_nick">Tvůj Roblox / Discord Nickname:</label>
+                    <input type="text" id="user_nick" class="form-control" required placeholder="Např. RidicAutobusu12">
+                </div>
+                <div class="form-group">
+                    <label for="user_email">Tvůj Kontaktní E-mail:</label>
+                    <input type="email" id="user_email" class="form-control" required placeholder="Např. tvujemail@seznam.cz">
+                </div>
+                <div class="form-group">
+                    <label for="message_type">Typ zprávy:</label>
+                    <select id="message_type" class="form-control" style="background-color: var(--bg-card); color: white;">
+                        <option value="Nápad na vylepšení">Nápad na vylepšení RP</option>
+                        <option value="Otázka / Dotaz">Otázka / Dotaz</option>
+                        <option value="Nahlášení hráče">Nahlášení porušení pravidel</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="user_message">Text tvé zprávy:</label>
+                    <textarea id="user_message" class="form-control" rows="6" required placeholder="Zde podrobně rozepiš svůj nápad..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Odeslat E-mail</button>
+            </form>
         </div>
 
     </div>
 
+    <!-- PATIČKA -->
     <footer>
-        <p>Máte dotazy nebo nápady na zlepšení? Pošlete nám je přes E-mail nebo na náš Discord.</p>
-        <p>&copy; 2026 Car Crash Simulator V3 RP. Všechna práva vyhrazena.</p>
+        <p>&copy; 2026 Car Crash Simulator V3 Realistické RP. Vytvořil Já & Honza.</p>
     </footer>
 
+    <!-- JAVASCRIPT PRO OVLÁDÁNÍ WEBU -->
     <script>
+        // Přepínání stránek
         function openPage(pageId) {
-            // Skryje všechny stránky
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => page.classList.remove('active'));
-
-            // Deaktivuje aktivní vzhled u všech tlačítek
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            // Ukáže vybranou stránku
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
             document.getElementById(pageId).classList.add('active');
-
-            // Označí stisknuté tlačítko jako aktivní
             event.currentTarget.classList.add('active');
         }
-    </script>
 
+        // --- NASTAVENÍ INTEGRACE FORMULÁŘE NA E-MAIL ---
+        // Pro plnou funkčnost odesílání na milovnikmhd1234@gmail.com doporučuji zdarma využít službu EmailJS.com
+        // Do závorky níže vložíš svůj veřejný klíč (Public Key), který dostaneš po registraci na EmailJS.
+        (function() {
+            emailjs.init("TVUJ_PUBLIC_KEY_Z_EMAILJS"); 
+        })();
+
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Načtení dat z formuláře
+            const nick = document.getElementById('user_nick').value;
+            const email = document.getElementById('user_email').value;
+            const type = document.getElementById('message_type').value;
+            const msg = document.getElementById('user_message').value;
+
+            // Pokud ještě nemáte propojené EmailJS, formulář ukáže simulaci, že se e-mail odesílá
+            alert(`Zpráva od: ${nick}\nTyp: ${type}\n\nOdesílám na e-mail: milovnikmhd1234@gmail.com...\n\n(Pro spuštění ostrého odesílání stačí propojit bezplatný účet na EmailJS.com s kódem webu!)`);
+            
+            /* 
+            Kód pro ostré odesílání (odmažte komentář po registraci na EmailJS):
+            emailjs.send("SEM_VLOZ_SERVICE_ID", "SEM_VLOZ_TEMPLATE_ID", {
+                from_name: nick,
+                reply_to: email,
+                subject_type: type,
+                message: msg
+            }).then(function() {
+                alert('E-mail byl úspěšně doručen týmu RP!');
+            }, function(error) {
+                alert('Chyba při odesílání: ' + JSON.stringify(error));
+            });
+            */
+            
+            document.getElementById('contact-form').reset();
+        });
+    </script>
 </body>
 </html>
