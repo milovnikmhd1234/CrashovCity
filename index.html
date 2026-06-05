@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Crash Simulator V3 - Realistické RP</title>
+    <style>
+        /* Základní styly a barvy */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #f4f4f4;
+            line-height: 1.6;
+        }
+
+        /* Hlavička webu */
+        header {
+            background: linear-gradient(135deg, #2c3e50, #000000);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 3px solid #ff4757;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            color: #a4b0be;
+            font-size: 1.1rem;
+        }
+
+        /* Navigační menu */
+        nav {
+            background-color: #2f3542;
+            display: flex;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #ffffff;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        nav button:hover, nav button.active {
+            background-color: #ff4757;
+            color: white;
+        }
+
+        /* Obsah stránek */
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #2f3542;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .page {
+            display: none; /* Skryje stránky, které nejsou aktivní */
+        }
+
+        .page.active {
+            display: block; /* Ukáže aktivní stránku */
+        }
+
+        h2 {
+            color: #ff4757;
+            border-bottom: 2px solid #57606f;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin: 20px 0 10px 0;
+            color: #ffa502;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Blokové citace (Upozornění) */
+        blockquote {
+            background-color: #3e444f;
+            border-left: 5px solid #ff4757;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            font-style: italic;
+        }
+
+        /* Seznamy */
+        ul {
+            margin-left: 25px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        /* Tabulky pro MHD */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #212529;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #495057;
+        }
+
+        th {
+            background-color: #ff4757;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #2c3034;
+        }
+
+        /* Tlačítka a odkazy */
+        .btn-discord {
+            display: inline-block;
+            background-color: #5865F2;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-discord:hover {
+            background-color: #404eed;
+            transform: translateY(-2px);
+        }
+
+        /* Sekce Frakcí */
+        .faction-group {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #3e444f;
+            border-radius: 6px;
+        }
+
+        .faction-important { border-left: 5px solid #ff4757; }
+        .faction-transport { border-left: 5px solid #1e90ff; }
+        .faction-other { border-left: 5px solid #2ed573; }
+
+        /* Patička */
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: #747d8c;
+            font-size: 0.9rem;
+            border-top: 1px solid #2f3542;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Car Crash Simulator V3</h1>
+        <p>Oficiální stránka pro realistický Roleplay | Zakladatelé: Já & Honza</p>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="openPage('info')">Info o RP</button>
+        <button class="nav-btn" onclick="openPage('doklady')">Potřebné údaje</button>
+        <button class="nav-btn" onclick="openPage('mhd')">Jízdní řády MHD</button>
+        <button class="nav-btn" onclick="openPage('frakce')">Frakce</button>
+    </nav>
+
+    <div class="container">
+
+        <div id="info" class="page active">
+            <h2>O našem projektu</h2>
+            <p>Vítáme vás na našem webu! Pokud hledáte místo, kde si v Roblox hře <strong>Car Crash Simulator V3</strong> užijete stoprocentně realistický Roleplay (RP), jste na správném místě.</p>
+            <p>Společně s Honzou se snažíme simulovat reálný život se vším, co k tomu patří – od dodržování dopravních předpisů až po zásahy integrovaného záchranného systému.</p>
+            
+            <blockquote>
+                <strong>Pravidlo č. 1:</strong> Vždy se chovejte tak, jak byste se chovali v reálném životě. Respektujte ostatní hráče a pravidla frakcí!
+            </blockquote>
+
+            <h3>Jak se zapojit?</h3>
+            <p>Stačí si přečíst pravidla, zařídit si potřebné doklady na našem Discordu a můžete vyrazit do ulic. Máte nápady nebo otázky? Napište nám na Discord nebo na náš e-mail!</p>
+        </div>
+
+        <div id="doklady" class="page">
+            <h2>Potřebné údaje a doklady</h2>
+            <p>Aby mohl být náš Roleplay opravdu realistický, nemůže do hry jen tak vletět kdokoli bez dokladů. Každý občan u nás musí mít své dokumenty.</p>
+            
+            <h3>Co musíte mít pro hru:</h3>
+            <ul>
+                <li><strong>1. ID (Občanský průkaz)</strong> – Základní průkaz totožnosti.</li>
+                <li><strong>2. Řidičský průkaz</strong> – Bez něj legálně nesednete za volant.</li>
+                <li><strong>3. Zbrojní průkaz</strong> – Povinnost pro všechny členy Policie (případně speciální povolení).</li>
+            </ul>
+
+            <blockquote>
+                <strong>Důležité upozornění:</strong> Všechny doklady jsou <strong>zcela nereálné (fiktivní)</strong> a slouží výhradně pro účely hry v Robloxu!
+            </blockquote>
+
+            <h3>Jak doklady získat?</h3>
+            <p>Doklady si uděláte na našem oficiálním komunikačním Discord serveru <strong>Official RP</strong>. Klikněte na tlačítko níže, připojte se a požádejte o jejich vydání.</p>
+            
+            <a href="https://discord.gg/NhypZ2Se54" target="_blank" class="btn-discord">Připojit se na Discord (Official RP)</a>
+        </div>
+
+        <div id="mhd" class="page">
+            <h2>Linky Městské Hromadné Dopravy (MHD)</h2>
+            <p>Pokud zrovna nemáte auto nebo řidičský průkaz, můžete po mapě cestovat pomocí našich autobusových linek.</p>
+
+            <h3>🏙️ Mapa: City</h3>
+            <table>
+                <tr>
+                    <th style="width: 20%;">Linka</th>
+                    <th>Trasa / Zastávky</th>
+                </tr>
+                <tr>
+                    <td><strong>Linka 1</strong></td>
+                    <td>Spawn ➔ Sídliště ➔ Benzinka ➔ Dálnice D1</td>
+                </tr>
+                <tr>
+                    <td><strong>Linka 2</strong></td>
+                    <td>Spawn ➔ Sídliště ➔ Benzinka ➔ Sídliště ➔ Spawn</td>
+                </tr>
+            </table>
+
+            <h3>🌲 Mapa: CountrySide</h3>
+            <table>
+                <tr>
+                    <th style="width: 20%;">Linka</th>
+                    <th>Trasa / Zastávky</th>
+                </tr>
+                <tr>
+                    <td><strong>Linka 201</strong></td>
+                    <td>Spawn ➔ Policejní stanice ➔ Autobusové stanoviště</td>
+                </tr>
+                <tr>
+                    <td><strong>Linka 202</strong></td>
+                    <td>Spawn ➔ U Pláže ➔ Garáže u Kostela</td>
+                </tr>
+            </table>
+            <p><em>Poznámka: Ostatní oblasti jsou aktuálně bez pevné mapy linek.</em></p>
+        </div>
+
+        <div id="frakce" class="page">
+            <h2>Frakce a Zaměstnání</h2>
+            <p>Chcete se aktivně zapojit do chodu města? Vyberte si jednu z našich oficiálních frakcí.</p>
+
+            <div class="faction-group faction-important">
+                <h3>⚠️ Důležité složky</h3>
+                <ul>
+                    <li><strong>IZS (Záchranka a Hasiči):</strong> Pomoc při nehodách, hašení požárů a záchrana životů.</li>
+                    <li><strong>Policie:</strong> Dohlížení na pořádek, silniční kontroly. Pro vstup k Policii <strong>musíte mít Zbrojní průkaz!</strong></li>
+                </ul>
+            </div>
+
+            <div class="faction-group faction-transport">
+                <h3>🚌 Dopravní složky</h3>
+                <ul>
+                    <li><strong>MHD:</strong> Řidiči autobusů jezdící na linkách podle jízdních řádů.</li>
+                    <li><strong>Kamiony:</strong> Přeprava nákladu a zásobování po celé mapě.</li>
+                </ul>
+            </div>
+
+            <div class="faction-group faction-other">
+                <h3>⚙️ Ostatní</h3>
+                <ul>
+                    <li><strong>Autoškola:</strong> Provádění autoškolských zkoušek a oficiální schvalování řidičáků.</li>
+                    <li><strong>Admin tým:</strong> Správa hry, dohled nad dodržováním pravidel RP.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Máte dotazy nebo nápady na zlepšení? Pošlete nám je přes E-mail nebo na náš Discord.</p>
+        <p>&copy; 2026 Car Crash Simulator V3 RP. Všechna práva vyhrazena.</p>
+    </footer>
+
+    <script>
+        function openPage(pageId) {
+            // Skryje všechny stránky
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+
+            // Deaktivuje aktivní vzhled u všech tlačítek
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Ukáže vybranou stránku
+            document.getElementById(pageId).classList.add('active');
+
+            // Označí stisknuté tlačítko jako aktivní
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+
+</body>
+</html>
