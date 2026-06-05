@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Crash Simulator V3 - Realistické RP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Nové, ještě lepší herní a čitelné fonty -->
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- PREMIUM GUI DESIGN SYSTEM --- */
+        /* --- ULTRA-PREMIUM REPREZENTATIVNÍ GUI --- */
         :root {
-            --bg-base: #0a0c10;
-            --bg-surface: #131722;
-            --bg-card: #1c2333;
-            --primary: #ff3838;
-            --primary-glow: rgba(255, 56, 56, 0.4);
-            --secondary: #00d2d3;
-            --text-main: #f1f2f6;
-            --text-muted: #a4b0be;
-            --border-color: #2f3640;
+            --bg-base: #060814;
+            --bg-surface: #0f1322;
+            --bg-card: #171d31;
+            --primary: #ff2a2a;
+            --primary-glow: rgba(255, 42, 42, 0.4);
+            --secondary: #00f2fe;
+            --secondary-glow: rgba(0, 242, 254, 0.3);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: #262f4c;
         }
 
         * {
@@ -29,81 +30,85 @@
         body {
             background-color: var(--bg-base);
             color: var(--text-main);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Hlavička */
+        /* Herní moderní hlavička */
         header {
-            background: linear-gradient(180deg, rgba(19, 23, 34, 0.95) 0%, rgba(10, 12, 16, 1) 100%), 
-                        url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1920&q=80');
+            background: linear-gradient(180deg, rgba(15, 19, 34, 0.9) 0%, rgba(6, 8, 20, 1) 100%), 
+                        url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            padding: 50px 20px;
+            padding: 70px 20px;
             text-align: center;
-            border-bottom: 2px solid var(--primary);
-            box-shadow: 0 0 30px var(--primary-glow);
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 5px 25px var(--primary-glow);
         }
 
         header h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
+            font-family: 'Teko', sans-serif;
+            font-size: 5rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             color: #ffffff;
-            text-shadow: 0 0 20px var(--primary-glow);
+            line-height: 0.9;
+            text-shadow: 0 0 15px var(--primary-glow);
             margin-bottom: 10px;
         }
 
         header p {
             color: var(--secondary);
+            font-family: 'Teko', sans-serif;
+            font-size: 1.8rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 1.3rem;
+            text-shadow: 0 0 10px var(--secondary-glow);
         }
 
-        /* --- OPRAVENÁ RESPONSIVNÍ NAVIGACE PRO GITHUB --- */
+        /* Responzivní Navigace pro GitHub */
         nav {
             background-color: var(--bg-surface);
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap; /* Způsobí, že se tlačítka na mobilu nesrazí a neskryjí, ale skočí dolů */
+            flex-wrap: wrap;
             gap: 8px;
             padding: 12px;
             position: sticky;
             top: 0;
             z-index: 1000;
             border-bottom: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
         }
 
         nav button {
             background: transparent;
             border: 1px solid transparent;
             color: var(--text-muted);
-            padding: 10px 20px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 700;
+            padding: 10px 18px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
             border-radius: 4px;
-            transition: all 0.3s ease;
-            flex-grow: 1; /* Tlačítka se roztáhnou podle potřeby displeje */
-            max-width: 180px; /* Aby nebyla obří na velkých monitorech */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-grow: 1;
+            max-width: 160px;
             text-align: center;
         }
 
         nav button:hover {
             color: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-            background-color: rgba(255, 56, 56, 0.05);
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px var(--secondary-glow);
+            background-color: rgba(0, 242, 254, 0.03);
         }
 
         nav button.active {
@@ -115,7 +120,7 @@
 
         /* Hlavní kontejner */
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 30px auto;
             padding: 0 15px;
         }
@@ -123,39 +128,41 @@
         .page {
             display: none;
             background-color: var(--bg-surface);
-            padding: 35px;
+            padding: 40px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
 
         .page.active {
             display: block;
-            animation: fadeIn 0.4s ease;
+            animation: scaleUp 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* Nadpisy */
+        /* Sekční Nadpisy */
         h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
             color: #ffffff;
             margin-bottom: 20px;
             border-left: 5px solid var(--primary);
             padding-left: 15px;
             text-transform: uppercase;
+            line-height: 1;
         }
 
         h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.4rem;
-            margin: 25px 0 15px 0;
+            font-family: 'Teko', sans-serif;
+            font-size: 2rem;
+            margin: 30px 0 15px 0;
             color: var(--secondary);
             text-transform: uppercase;
+            line-height: 1;
         }
 
         p {
@@ -170,20 +177,22 @@
             padding: 20px;
             margin-bottom: 15px;
             border-radius: 6px;
-            transition: 0.3s;
+            transition: 0.2s;
         }
 
         .rule-card:hover {
             border-color: var(--secondary);
-            transform: translateX(5px);
+            transform: translateX(4px);
         }
 
         .rule-card strong {
             color: var(--primary);
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.6rem;
             display: block;
             margin-bottom: 5px;
-            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* Discord tlačítko */
@@ -191,27 +200,27 @@
             display: inline-block;
             background: linear-gradient(135deg, #5865F2, #404eed);
             color: white;
-            padding: 15px 35px;
+            padding: 12px 30px;
             text-decoration: none;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.5rem;
             font-weight: bold;
             border-radius: 6px;
-            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.3);
             transition: 0.3s;
             margin-top: 15px;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .btn-discord:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(88, 101, 242, 0.5);
         }
 
-        /* Tabulky */
+        /* Responzivní Tabulky */
         .table-responsive {
             width: 100%;
-            overflow-x: auto; /* Zabrání rozbití designu na malém mobilu */
+            overflow-x: auto;
         }
 
         table {
@@ -225,24 +234,25 @@
         }
 
         th, td {
-            padding: 15px;
+            padding: 12px 15px;
             text-align: left;
         }
 
         th {
-            background-color: rgba(255, 56, 56, 0.1);
+            background-color: rgba(255, 42, 42, 0.15);
             color: #ffffff;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.5rem;
+            text-transform: uppercase;
             border-bottom: 2px solid var(--primary);
         }
 
         tr {
             border-bottom: 1px solid var(--border-color);
-            transition: 0.2s;
         }
 
         tr:hover {
-            background-color: rgba(0, 210, 211, 0.05);
+            background-color: rgba(0, 242, 254, 0.04);
         }
 
         /* Frakce */
@@ -281,56 +291,65 @@
             color: var(--secondary);
         }
 
-        /* Kontaktní formulář */
+        /* Formulář s přesměrováním na E-mailové aplikace */
         .form-group {
             margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 6px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.4rem;
             color: var(--text-muted);
+            text-transform: uppercase;
         }
 
         .form-control {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             color: #ffffff;
             border-radius: 6px;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
             transition: 0.3s;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow);
+            border-color: var(--secondary);
+            box-shadow: 0 0 10px var(--secondary-glow);
         }
 
         .btn-submit {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 15px 35px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
+            padding: 12px 30px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.5rem;
             font-weight: bold;
             text-transform: uppercase;
             border-radius: 6px;
             cursor: pointer;
             box-shadow: 0 5px 15px var(--primary-glow);
-            transition: 0.3s;
+            transition: 0.2s;
+            width: 100%;
         }
 
-        /* Mobilní optimalizace menu */
+        .btn-submit:hover {
+            box-shadow: 0 8px 22px var(--primary-glow);
+            background-color: #ff4444;
+        }
+
+        /* Mobilní optimalizace */
         @media (max-width: 768px) {
-            header h1 { font-size: 2.3rem; }
-            nav button { max-width: 100%; font-size: 0.9rem; padding: 8px 12px; }
-            .page { padding: 20px; }
+            header h1 { font-size: 3.5rem; }
+            header p { font-size: 1.4rem; }
+            nav button { max-width: 100%; font-size: 1.2rem; padding: 6px 10px; }
+            .page { padding: 25px 15px; }
         }
         
         footer {
@@ -340,16 +359,19 @@
             background-color: var(--bg-surface);
             border-top: 1px solid var(--border-color);
             color: var(--text-muted);
+            font-size: 0.95rem;
         }
     </style>
 </head>
 <body>
 
+    <!-- HLAVIČKA (Změněno na Petr a Honza) -->
     <header>
         <h1>Car Crash Simulator V3</h1>
-        <p>Ultra-Realistický Roleplay server | Majitelé: Já & Honza</p>
+        <p>Ultra-Realistický Roleplay server | Majitelé: Petr & Honza</p>
     </header>
 
+    <!-- MENU (Responzivní pro GitHub) -->
     <nav>
         <button class="nav-btn active" onclick="openPage('info')">Hlavní Info</button>
         <button class="nav-btn" onclick="openPage('pravidla')">Pravidla</button>
@@ -361,14 +383,16 @@
 
     <div class="container">
 
+        <!-- 1. STRÁNKA: INFO -->
         <div id="info" class="page active">
             <h2>Projekt Realistického RP</h2>
-            <p>Vítej na webu naší dedikované RP komunity pro Roblox hru <strong>Car Crash Simulator V3</strong>. Náš projekt vznikl pod vedením mě a Honzy za jediným účelem: vytáhnout z této hry absolutní maximum realismu.</p>
-            <p>Zapomeň na bezhlavé narážení do zdí. Zde simulujeme reálnou ekonomiku, složky integrovaného záchranného systému, silniční kontroly a každodenní rutinu řidičů MHD i nákladních vozů.</p>
+            <p>Vítej na webu naší dedikované RP komunity pro Roblox hru <strong>Car Crash Simulator V3</strong>. Náš projekt vznikl pod vedením <strong>Petra a Honzy</strong> za jediným účelem: vytáhnout z této hry absolutní maximum realismu.</p>
+            <p>Zapomeň na bezhlavé narážení do zdí. Zde simulujeme reálné složky integrovaného záchranného systému, poctivé silniční kontroly a každodenní rutinu řidičů MHD i nákladních vozů.</p>
             <h3>Jak začít?</h3>
             <p>Přejdi do sekce <strong>Pravidla</strong>, nastuduj si naše herní zákony, poté se napoj na náš Discord, kde ti schválíme občanku, a můžeš vyrazit rovnou na mapu!</p>
         </div>
 
+        <!-- 2. STRÁNKA: PRAVIDLA -->
         <div id="pravidla" class="page">
             <h2>Kodex Pravidel pro Realistické RP</h2>
             <p>Porušení jakéhokoliv z těchto pravidel se trestá vyhozením z RP akce Admin týmem.</p>
@@ -395,6 +419,7 @@
             </div>
         </div>
 
+        <!-- 3. STRÁNKA: DOKLADY -->
         <div id="doklady" class="page">
             <h2>Potřebné Údaje k Hře</h2>
             <p>Bez řádných dokumentů tě Policie při první kontrole zatkne a zabaví ti vozidlo. Pro plnohodnotné RP u sebe musíš mít:</p>
@@ -404,13 +429,14 @@
             <div class="rule-card"><strong>3. Zbrojní průkaz</strong> - Povinný pro POLICII (civilisté ho běžně nesmí nosit).</div>
 
             <h3 style="color: var(--primary);">⚠️ DŮLEŽITÉ UPOZORNĚNÍ</h3>
-            <p>Všechny tyto doklady jsou <strong>zcela NEREÁLNÉ (fiktivní)</strong>. Nikdy nikde nezadávejte své reálné osobní údaje! Doklady vám vystavíme výhradně u nás na komunikačním serveru.</p>
+            <p>Všechny tyto doklady jsou <strong>zcela NEREÁLNÉ (fiktivní)</strong>. Nikdy nikde nezadávejte své reálné osobní údaje! Doklady vám vystavíme výhradně u nás na komunikačním serveru na Discordu.</p>
             
             <center>
-                <a href="https://discord.gg/NhypZ2Se54" target="_blank" class="btn-discord">Vytvořit doklady na Discordu</a>
+                <a href="https://discord.gg/NhypZ2Se54" target="_blank" class="btn-discord">Udělat doklady na Discordu official RP</a>
             </center>
         </div>
 
+        <!-- 4. STRÁNKA: MHD -->
         <div id="mhd" class="page">
             <h2>Linkové Jízdní Řády MHD</h2>
             <p>Řidiči autobusů jsou povinni striktně dodržovat tyto stanovené trasy a zastavovat na každé zastávce.</p>
@@ -453,6 +479,7 @@
             <p style="font-style: italic; color: var(--text-muted); margin-top: 10px;">Poznámka: Oblasti mimo tyto vyznačené zóny jsou aktuálně vedeny jako bez mapy linek.</p>
         </div>
 
+        <!-- 5. STRÁNKA: FRAKCE -->
         <div id="frakce" class="page">
             <h2>Organizační Frakce</h2>
             <div class="faction-grid">
@@ -474,70 +501,83 @@
                     <h3>🟢 Ostatní</h3>
                     <ul>
                         <li><strong>Autoškola:</strong> Provádění testů a praktických jízd pro nové hráče.</li>
-                        <li><strong>Admin:</strong> Zakladatelé (Já a Honza) a pověření správci dohlížející na pravidla.</li>
+                        <li><strong>Admin:</strong> Zakladatelé (Petr a Honza) a pověření správci dohlížející na pravidla.</li>
                     </ul>
                 </div>
             </div>
         </div>
 
+        <!-- 6. STRÁNKA: KONTAKT (PŘESMĚROVÁNÍ NA POŠTOVNÍ KLIENTY) -->
         <div id="kontakt" class="page">
-            <h2>Odeslat nápad / Otázku na e-mail</h2>
-            <p>Máš skvělý nápad na novou linku MHD, vylepšení pravidel, nebo se chceš na něco zeptat mě a Honzy? Vyplň formulář níže a zpráva dorazí přímo na náš e-mail: <strong>milovnikmhd1234@gmail.com</strong>.</p>
+            <h2>Nápady a otázky</h2>
+            <p>Máš skvělý nápad nebo otázku pro Petra a Honzu? Vyplň text níže a klikni na odeslat. Web tě automaticky přesměruje do tvé e-mailové aplikace (Gmail, Mail, Outlook), kde bude vše připraveno k odeslání!</p>
             
             <form id="contact-form">
                 <div class="form-group">
-                    <label for="user_nick">Tvůj Roblox / Discord Nickname:</label>
+                    <label for="user_nick">Tvůj Nickname (Roblox / Discord):</label>
                     <input type="text" id="user_nick" class="form-control" required placeholder="Např. RidicAutobusu12">
                 </div>
                 <div class="form-group">
-                    <label for="user_email">Tvůj Kontaktní E-mail:</label>
-                    <input type="email" id="user_email" class="form-control" required placeholder="Např. tvujemail@seznam.cz">
-                </div>
-                <div class="form-group">
-                    <label for="message_type">Typ zprávy:</label>
+                    <label for="message_type">Typ tvé zprávy:</label>
                     <select id="message_type" class="form-control" style="background-color: var(--bg-card); color: white;">
-                        <option value="Nápad na vylepšení">Nápad na vylepšení RP</option>
+                        <option value="Nápad na vylepšení RP">Nápad na vylepšení RP</option>
                         <option value="Otázka / Dotaz">Otázka / Dotaz</option>
-                        <option value="Nahlášení hráče">Nahlášení porušení pravidel</option>
+                        <option value="Nahlášení porušení pravidel">Nahlášení porušení pravidel</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="user_message">Text tvé zprávy:</label>
-                    <textarea id="user_message" class="form-control" rows="6" required placeholder="Zde podrobně rozepiš svůj nápad..."></textarea>
+                    <textarea id="user_message" class="form-control" rows="6" required placeholder="Zde podrobně napiš svůj nápad nebo dotaz..."></textarea>
                 </div>
-                <button type="submit" class="btn-submit">Odeslat E-mail</button>
+                <button type="submit" class="btn-submit">Otevřít E-mailovou aplikaci a odeslat</button>
             </form>
         </div>
 
     </div>
 
+    <!-- PATIČKA -->
     <footer>
-        <p>&copy; 2026 Car Crash Simulator V3 Realistické RP. Vytvořil Já & Honza.</p>
+        <p>&copy; 2026 Car Crash Simulator V3 Realistické RP. Vytvořili Petr & Honza.</p>
     </footer>
 
+    <!-- JAVASCRIPT PRO OVLÁDÁNÍ FUNKCÍ -->
     <script>
+        // Přepínání stránek
         function openPage(pageId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             
             document.getElementById(pageId).classList.add('active');
             
-            // Oprava pro bezpečné označení aktivního tlačítka na GitHub Pages
             const clickedBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.getAttribute('onclick').includes(pageId));
             if(clickedBtn) clickedBtn.classList.add('active');
         }
 
-        // EmailJS Inicializace
-        (function() {
-            emailjs.init("YOUR_PUBLIC_KEY"); 
-        })();
-
+        // --- REALISTICKÉ PŘESMĚROVÁNÍ NA GMAIL / OUTLOOK / APPLE MAIL ---
         document.getElementById('contact-form').addEventListener('submit', function(event) {
-            event.preventDefault();
+            event.preventDefault(); // Zabrání restartování stránky
+            
+            const emailPrijemce = "milovnikmhd1234@gmail.com";
             const nick = document.getElementById('user_nick').value;
-            const type = document.getElementById('message_type').value;
+            const typ = document.getElementById('message_type').value;
+            const textZpravy = document.getElementById('user_message').value;
 
-            alert(`Zpráva od: ${nick}\nTyp: ${type}\n\nOdesílám na e-mail: milovnikmhd1234@gmail.com...`);
+            // Vytvoření předmětu a těla e-mailu
+            const predmet = encodeURIComponent(`[Car Crash RP] ${typ} od hráče ${nick}`);
+            const teloZpravy = encodeURIComponent(
+                `Zdravím Petře a Honzo,\n\n` +
+                `Posílám zprávu z RP webu.\n` +
+                `Odesílatel (Nick): ${nick}\n` +
+                `Typ zprávy: ${typ}\n\n` +
+                `--- TEXT ZPRÁVY ---\n` +
+                `${textZpravy}\n` +
+                `--------------------\n`
+            );
+
+            // Spuštění systémového mailto příkazu, který otevře aplikaci v PC nebo mobilu
+            window.location.href = `mailto:${emailPrijemce}?subject=${predmet}&body=${teloZpravy}`;
+            
+            // Vyčištění formuláře
             document.getElementById('contact-form').reset();
         });
     </script>
