@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Správa Silnic - Car Crash Simulator V3</title>
+    <!-- Špičkové herní fonty -->
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- PREMIUM ROAD MANAGEMENT DESIGN SYSTEM --- */
+        :root {
+            --bg-base: #060814;
+            --bg-surface: #0f1322;
+            --bg-card: #171d31;
+            --primary: #ffa502; /* Oranžová barva správy silnic / silničářů */
+            --primary-glow: rgba(255, 165, 2, 0.4);
+            --secondary: #2ed573;
+            --secondary-glow: rgba(46, 213, 115, 0.3);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: #262f4c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Silničářská tématická hlavička */
+        header {
+            background: linear-gradient(180deg, rgba(15, 19, 34, 0.9) 0%, rgba(6, 8, 20, 1) 100%), 
+                        url('https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 70px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 5px 25px var(--primary-glow);
+        }
+
+        header h1 {
+            font-family: 'Teko', sans-serif;
+            font-size: 5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #ffffff;
+            line-height: 0.9;
+            text-shadow: 0 0 15px var(--primary-glow);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--primary);
+            font-family: 'Teko', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Responzivní Navigace */
+        nav {
+            background-color: var(--bg-surface);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+        }
+
+        nav button {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 10px 18px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            flex-grow: 1;
+            max-width: 160px;
+            text-align: center;
+        }
+
+        nav button:hover {
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        nav button.active {
+            background: var(--primary);
+            color: #000000; /* Černý text na oranžovém tlačítku pro lepší kontrast */
+            font-weight: 700;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        /* Speciální Admin Tlačítko v menu */
+        nav button.admin-btn {
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+        }
+        nav button.admin-btn:hover {
+            background-color: rgba(255, 165, 2, 0.1);
+        }
+
+        /* Hlavní kontejner */
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .page {
+            display: none;
+            background-color: var(--bg-surface);
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .page.active {
+            display: block;
+            animation: scaleUp 0.3s ease;
+        }
+
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Nadpisy */
+        h2 {
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        h3 {
+            font-family: 'Teko', sans-serif;
+            font-size: 2rem;
+            margin: 25px 0 15px 0;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        /* --- AKTUALITY KARTY --- */
+        #news-container {
+            margin-top: 20px;
+        }
+
+        .news-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .news-date {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .news-card h4 {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.8rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        /* Sekce pro přidávání aktualit (Skrytá) */
+        #admin-panel {
+            display: none;
+            background-color: #1e1b10;
+            border: 1px solid var(--primary);
+            padding: 25px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+
+        #admin-panel.unlocked {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* Discord sekce */
+        .discord-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-discord {
+            display: inline-block;
+            background: linear-gradient(135deg, #5865F2, #404eed);
+            color: white;
+            padding: 12px 35px;
+            text-decoration: none;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.6rem;
+            font-weight: bold;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.3);
+            transition: 0.3s;
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        .btn-discord:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(88, 101, 242, 0.5);
+        }
+
+        /* Formuláře */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: #000000;
+            border: none;
+            padding: 12px 25px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #ffb830;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 3.5rem; }
+            nav button { max-width: 100%; font-size: 1.2rem; }
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 60px;
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HLAVIČKA -->
+    <header>
+        <h1>Správa Silnic</h1>
+        <p>Infrastruktura a údržba komunikací | Petr & Honza</p>
+    </header>
+
+    <!-- NAVIGACE -->
+    <nav>
+        <button class="nav-btn active" onclick="openPage('aktuality-page')">Aktuality</button>
+        <button class="nav-btn" onclick="openPage('discord-page')">Discord Server</button>
+        <button class="nav-btn admin-btn" onclick="loginAdmin()">Admin Přihlášení</button>
+    </nav>
+
+    <div class="container">
+
+        <!-- 1. STRÁNKA: AKTUALITY -->
+        <div id="aktuality-page" class="page active">
+            <h2>Aktuální stav komunikací a uzavírky</h2>
+            <p>Vítejte na oficiálním portálu Správy silnic. Zde naleznete nejnovější oznámení o opravách silnic, nehodách na dálnici D1, zimní údržbě a plánovaných uzavírkách na mapách City a CountrySide.</p>
+
+            <!-- TAJNÝ PANEL PRO ADMINA (Zobrazí se jen po zadání kódu) -->
+            <div id="admin-panel">
+                <h3 style="color: var(--primary); margin-top: 0;">🛠️ Administrace: Přidat novou aktualitu</h3>
+                <form id="news-form">
+                    <div class="form-group">
+                        <label for="news-title">Název aktuality / Nadpis:</label>
+                        <input type="text" id="news-title" class="form-control" required placeholder="Např. Uzavírka dálnice D1">
+                    </div>
+                    <div class="form-group">
+                        <label for="news-content">Obsah zprávy:</label>
+                        <textarea id="news-content" class="form-control" rows="4" required placeholder="Zde podrobně rozepiš situaci na silnici..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Publikovat aktualitu na web</button>
+                </form>
+            </div>
+
+            <!-- MÍSTO, KAM SE BUDOU VKLÁDAT AKTUALITY -->
+            <div id="news-container">
+                <!-- Základní ukázkové aktuality, které jsou na webu od začátku -->
+                <div class="news-card">
+                    <div class="news-date">8. ČERVEN 2026</div>
+                    <h4>Zahájení provozu silničního portálu</h4>
+                    <p>Dnes byl oficiálně spuštěn web Správy silnic pro hru Car Crash Simulator V3 pod správou Petra a Honzy. Sledujte tuto stránku pro přehled o všech pracích na silnici a nehodách.</p>
+                </div>
+
+                <div class="news-card">
+                    <div class="news-date">7. ČERVEN 2026</div>
+                    <h4>Plánovaná oprava povrchu u Sídliště</h4>
+                    <p>Upozorňujeme řidiče, že na mapě City v oblasti Sídliště proběhne rekonstrukce pravého jízdního pruhu. Prosíme řidiče autobusů MHD (Linka 1 a Linka 2), aby v tomto úseku snížili rychlost.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. STRÁNKA: DISCORD SERVER -->
+        <div id="discord-page" class="page">
+            <h2>Náš Komunikační Discord</h2>
+            <p>Chceš se přidat k týmu silničářů, řídit odtahovku, uklízet vozovku po těžkých nehodách nebo jen sledovat dění v reálném čase? Připoj se na náš dedikovaný komunikační server.</p>
+            
+            <div class="discord-box">
+                <h3>Vstup do divize Správy silnic</h3>
+                <p>Kliknutím na tlačítko níže budeš bezpečně přesměrován na náš oficiální Discord server.</p>
+                <a href="https://discord.gg/mJ8TRbzQS" target="_blank" class="btn-discord">Připojit se na Discord server</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PATIČKA -->
+    <footer>
+        <p>&copy; 2026 Správa Silnic RP. Vytvořili Petr & Honza.</p>
+    </footer>
+
+    <!-- JAVASCRIPT PRO SPRÁVU STRÁNEK A ADMIN KÓDU -->
+    <script>
+        // Nastavení administrátorského kódu
+        const ADMIN_KOD = "1234"; // TADY si můžeš kód přepsat na jakýkoliv jiný!
+        let isAdmin = false;
+
+        // Přepínání stránek
+        function openPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            
+            const clickedBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.getAttribute('onclick').includes(pageId));
+            if(clickedBtn) clickedBtn.classList.add('active');
+        }
+
+        // Funkce pro přihlášení admina pomocí kódu
+        function loginAdmin() {
+            if (isAdmin) {
+                alert("Už jsi přihlášen jako Admin!");
+                return;
+            }
+
+            let zadanyKod = prompt("Zadej tajný administrátorský kód pro úpravu aktualit:");
+            
+            if (zadanyKod === ADMIN_KOD) {
+                isAdmin = true;
+                alert("Přihlášení úspěšné! Nyní můžeš psát a přidávat aktuality.");
+                document.getElementById('admin-panel').classList.add('unlocked');
+                openPage('aktuality-page'); // Přesměruje rovnou na sekci s aktualitami
+            } else if (zadanyKod !== null) {
+                alert("Nesprávný kód! Přístup odepřen.");
+            }
+        }
+
+        // Zpracování formuláře pro novou aktualitu
+        document.getElementById('news-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Zamezí obnovení stránky
+            
+            if (!isAdmin) {
+                alert("Chyba: Nejsi přihlášen jako administrátor!");
+                return;
+            }
+
+            const title = document.getElementById('news-title').value;
+            const content = document.getElementById('news-content').value;
+            
+            // Generování dnešního data v hezkém českém formátu
+            const dnes = new Date();
+            const mesice = ["LEDNA", "ÚNORA", "BŘEZNA", "DUBNA", "KVĚTNA", "ČERVNA", "ČERVENCE", "SRPNA", "ZÁŘÍ", "ŘÍJNA", "LISTOPADU", "PROSINCE"];
+            const naformatovaneDatum = `${dnes.getDate()}. ${mesice[dnes.getMonth()]} ${dnes.getFullYear()}`;
+
+            // Vytvoření nové HTML karty pro aktualitu
+            const novaAktualita = document.createElement('div');
+            novaAktualita.className = 'news-card';
+            novaAktualita.innerHTML = `
+                <div class="news-date">${naformatovaneDatum}</div>
+                <h4>${title}</h4>
+                <p>${content}</p>
+            `;
+
+            // Vložení nové aktuality na začátek seznamu (před starší aktuality)
+            const container = document.getElementById('news-container');
+            container.insertBefore(novaAktualita, container.firstChild);
+
+            // Vyčištění textových polí formuláře
+            document.getElementById('news-form').reset();
+            alert("Aktualita byla úspěšně přidána na web!");
+        });
+    </script>
+</body>
+</html>
