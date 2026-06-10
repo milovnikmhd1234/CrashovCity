@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RP Server - Plný Systém</title>
+    <title>RP Server - Plný Systém (GitHub Edice)</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -105,6 +105,7 @@
 </head>
 <body>
 
+    <!-- VERIFIKAČNÍ CLONA -->
     <div id="auth-wall">
         <div class="auth-card">
             <i class="fa-brands fa-discord" style="font-size: 60px; color: var(--primary); margin-bottom: 20px;"></i>
@@ -116,6 +117,7 @@
         </div>
     </div>
 
+    <!-- PANEL STRÁNKY -->
     <nav>
         <div class="logo">DIAMOND<span>RP</span></div>
         <div class="nav-right">
@@ -131,10 +133,12 @@
 
     <div class="container">
 
+        <!-- ADMIN PANEL -->
         <div id="admin-panel">
             <h2 style="margin-bottom: 20px; color: var(--danger);"><i class="fa-solid fa-shield-halved"></i> Administrace Serveru</h2>
             <div class="admin-grid">
                 
+                <!-- Přidání auta -->
                 <div>
                     <h3 style="margin-bottom: 15px;">Přidat nové vozidlo</h3>
                     <form id="add-car-form" onsubmit="addNewCar(event)">
@@ -169,10 +173,11 @@
                     </form>
                 </div>
 
+                <!-- Konzole -->
                 <div>
                     <h3 style="margin-bottom: 15px;">Ekonomická Konzole</h3>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">
-                        Příkazy: <code>/add money {přesné_jméno} {částka}</code> nebo <code>/delete money {přesné_jméno} {částka}</code>
+                        Příkazy: <code>/add money {jméno} {částka}</code> nebo <code>/delete money {jméno} {částka}</code>
                     </p>
                     <div class="console-box">
                         <div class="console-output" id="console-log">
@@ -187,6 +192,7 @@
             </div>
         </div>
 
+        <!-- OBCHOD -->
         <div class="shop-header">
             <h2><i class="fa-solid fa-car"></i> Kardealer / Obchod s vozidly</h2>
             <div class="categories">
@@ -210,14 +216,13 @@
         const SECRET_ADMIN_CODE = "RPAdmin2026"; 
         const IZS_CODE = "155150158";
 
-        // Výchozí RP vozidla rozřazená do tvých nových kategorií
         let defaultCars = [
             { id: 1, name: "Škoda Octavia RS", category: "Osobní auto", price: 65000, stock: 10, img: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=500&q=80" },
             { id: 2, name: "Ford Transit Custom", category: "Dodávka", price: 85000, stock: 5, img: "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=500&q=80" },
             { id: 3, name: "Scania R500 Streamline", category: "Kamion", price: 290000, stock: 2, img: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=500&q=80" }
         ];
 
-        // DATABÁZE (Ukládání v prohlížeči)
+        // DATABÁZE V PROHLÍŽEČI
         let cars = JSON.parse(localStorage.getItem('rp_cars')) || defaultCars;
         let usersDB = JSON.parse(localStorage.getItem('rp_users_db')) || {}; 
         let currentUser = localStorage.getItem('rp_current_user') || null;
@@ -226,37 +231,42 @@
         let isIzsUnlocked = false;
         let activeCategory = 'Vše';
 
-        // Kontrola, zda se uživatel vrací z Discord redirectu
-        checkDiscordRedirect();
+        // Spustit kontrolu URL ihned při načtení
+        checkDiscordReturn();
 
-        // Funkce pro simulaci / provedení redirectu
         function redirectToDiscord() {
-            // Uložíme do paměti příznak, že se uživatel šel přihlásit
-            localStorage.setItem('rp_oauth_logging', 'true');
-            // Přesměrování na tvou URL aplikaci
             window.location.href = DISCORD_URL;
         }
 
-        function checkDiscordRedirect() {
-            const isLogging = localStorage.getItem('rp_oauth_logging');
+        // FUNKCE: Kontroluje, zda adresa obsahuje parametry od Discordu (?code=...)
+        function checkDiscordReturn() {
+            const urlParams = new URLSearchParams(window.location.search);
             
-            // Pokud se vrátil z odkazu (simulujeme přesměrování zpět na tuto stránku)
-            if (isLogging === 'true') {
-                localStorage.removeItem('rp_oauth_logging');
-                // Vygenerujeme testovací RP jméno na základě "Discord" přihlášení (např. DiscordUser)
-                let randomId = Math.floor(Math.random() * 9000) + 1000;
-                currentUser = "Hrac_" + randomId;
-                localStorage.setItem('rp_current_user', currentUser);
+            // Pokud URL obsahuje "code", znamená to, že se uživatel právě úspěšně vrátil z Discordu
+            if (urlParams.has('code') || urlParams.has('access_token')) {
+                // Vyčistíme URL, aby to vypadalo čistě bez kódu
+                window.history.replaceState({}, document.title, window.location.pathname);
                 
-                // Pokud uživatel ještě neexistuje v naší DB, založíme mu účet s $100,000
+                // Pokud uživatel ještě není vytvořen, vygenerujeme mu session jméno
+                if (!currentUser) {
+                    let randomId = Math.floor(Math.random() * 9000) + 1000;
+                    currentUser = "Hrac_" + randomId;
+                    localStorage.setItem('rp_current_user', currentUser);
+                }
+                
+                // Založení profilu v DB a uložení základních peněz
                 if (!usersDB[currentUser]) {
                     usersDB[currentUser] = { money: 100000 };
-                    localStorage.setItem('rp_users_db', JSON.stringify(usersDB));
                 }
+                saveData();
             }
 
-            // Kontrola zda je přihlášen, pokud ano, schováme zeď
+            // Odemčení webu, pokud máme přihlášeného uživatele
             if (currentUser) {
+                if (!usersDB[currentUser]) {
+                    usersDB[currentUser] = { money: 100000 };
+                    saveData();
+                }
                 document.getElementById('auth-wall').style.display = 'none';
                 document.getElementById('display-username').innerText = currentUser;
                 updateWalletDisplay();
@@ -299,7 +309,7 @@
             });
         }
 
-        // --- FUNKČNÍ EKONOMIKA (ÚPRAVA PENĚZ PODLE JMÉNA) ---
+        // --- OPRAVENÁ A FUNKČNÍ EKONOMIKA ---
         function handleConsole(event) {
             if (event.key === 'Enter') {
                 const inputEl = document.getElementById('console-input');
@@ -309,7 +319,6 @@
                 if (!command) return;
                 logToConsole(`> ${command}`);
 
-                // Regexy na příkazy
                 const addMatch = command.match(/^\/add\s+money\s+([\w#_]+)\s+(\d+)$/i);
                 const deleteMatch = command.match(/^\/delete\s+money\s+([\w#_]+)\s+(\d+)$/i);
 
@@ -317,14 +326,13 @@
                     const targetUser = addMatch[1];
                     const amount = parseInt(addMatch[2]);
                     
-                    // Pokud uživatel existuje v DB, přičteme mu
                     if (usersDB[targetUser]) {
                         usersDB[targetUser].money += amount;
                         saveData();
                         updateWalletDisplay();
-                        logToConsole(`[Ekonomika]: Hráči ${targetUser} bylo přičteno $${amount.toLocaleString()}.`);
+                        logToConsole(`[Ekonomika]: Hráči ${targetUser} přičteno $${amount.toLocaleString()}.`);
                     } else {
-                        logToConsole(`[Chyba]: Uživatel "${targetUser}" nebyl nalezen v databázi! (Musí se nejdřív přihlásit)`);
+                        logToConsole(`[Chyba]: Uživatel "${targetUser}" neexistuje. (Tip: tvoje jméno je v liště vpravo)`);
                     }
                 } 
                 else if (deleteMatch) {
@@ -336,13 +344,13 @@
                         if(usersDB[targetUser].money < 0) usersDB[targetUser].money = 0;
                         saveData();
                         updateWalletDisplay();
-                        logToConsole(`[Ekonomika]: Hráči ${targetUser} bylo odebráno $${amount.toLocaleString()}.`);
+                        logToConsole(`[Ekonomika]: Hráči ${targetUser} odebráno $${amount.toLocaleString()}.`);
                     } else {
-                        logToConsole(`[Chyba]: Uživatel "${targetUser}" nebyl nalezen v databázi!`);
+                        logToConsole(`[Chyba]: Uživatel "${targetUser}" neexistuje.`);
                     }
                 } 
                 else {
-                    logToConsole(`[Chyba]: Neznámý příkaz nebo špatný formát. Použij např: /add money ${currentUser || 'Jmeno'} 5000`);
+                    logToConsole(`[Chyba]: Špatná syntaxe. Použij: /add money ${currentUser || 'Jmeno'} 5000`);
                 }
             }
         }
@@ -371,11 +379,11 @@
         }
 
         function deleteCar(id) {
-            if(confirm("Opravdu chceš toto vozidlo trvale smazat z obchodu?")) {
+            if(confirm("Opravdu chceš toto vozidlo trvale smazat?")) {
                 cars = cars.filter(car => car.id !== id);
                 saveData();
                 renderCars();
-                logToConsole(`[Katalog]: Vozidlo bylo úspěšně odebráno.`);
+                logToConsole(`[Katalog]: Vozidlo bylo odebráno.`);
             }
         }
 
@@ -432,7 +440,6 @@
             renderCars();
         }
 
-        // POMOCNÉ UKLÁDACÍ METODY
         function updateWalletDisplay() { 
             if (currentUser && usersDB[currentUser]) {
                 document.getElementById('user-wallet').innerText = `Peníze: $${usersDB[currentUser].money.toLocaleString()}`; 
