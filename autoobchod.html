@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RP Server - Panel s Heslem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --bg-card: #161925;
+            --primary: #7289da;
+            --accent: #00ffcc;
+            --danger: #ff4757;
+            --text-main: #ffffff;
+            --text-muted: #a0a5b5;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
+
+        /* --- NAVIGACE --- */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 50px; background: rgba(22, 25, 37, 0.8);
+            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+        .logo span { color: var(--accent); }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .wallet-info {
+            background: rgba(0, 255, 204, 0.1); border: 1px solid var(--accent);
+            padding: 8px 15px; border-radius: 20px; font-weight: 600; color: var(--accent);
+        }
+
+        /* --- TLAČÍTKA --- */
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+        .btn-discord { background-color: var(--primary); color: white; }
+        .btn-discord:hover { background-color: #5b73c7; box-shadow: 0 0 15px rgba(114, 137, 218, 0.5); }
+        .btn-admin { background: #23272a; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-admin.active { background: var(--danger); color: white; border-color: var(--danger); }
+        .btn-submit { background: var(--accent); color: var(--bg-dark); width: 100%; justify-content: center; }
+        .btn-submit:hover { box-shadow: 0 0 15px var(--accent); }
+
+        /* --- HLAVNÍ OBSAH --- */
+        .container { max-width: 1300px; margin: 40px auto; padding: 0 20px; }
+
+        /* --- ADMIN PANEL --- */
+        #admin-panel {
+            display: none; background: var(--bg-card); border-radius: 15px; padding: 30px;
+            margin-bottom: 40px; border: 1px solid rgba(255, 71, 87, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 14px; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px; background: #1c2030; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: white; font-size: 15px;
+        }
+        .form-group input:focus { border-color: var(--accent); outline: none; }
+
+        /* Konzole */
+        .console-box { background: #090a0f; border-radius: 8px; padding: 20px; border: 1px solid #23272a; }
+        .console-output { height: 150px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 13px; color: #00ff00; margin-bottom: 15px; padding: 10px; background: #050608; border-radius: 4px; }
+
+        /* --- OBCHOD S AUTY --- */
+        .shop-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .categories { display: flex; gap: 10px; }
+        .cat-btn { background: #1c2030; color: var(--text-muted); padding: 8px 16px; border-radius: 20px; border: none; cursor: pointer; transition: 0.3s; }
+        .cat-btn.active, .cat-btn:hover { background: var(--accent); color: var(--bg-dark); font-weight: 600; }
+
+        .car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
+        .car-card { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: transform 0.3s, box-shadow 0.3s; }
+        .car-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,255,204,0.1); border-color: rgba(0,255,204,0.2); }
+        .car-img { width: 100%; height: 200px; object-fit: cover; background: #2c3e50; }
+        .car-info { padding: 20px; }
+        .car-category { font-size: 12px; text-transform: uppercase; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-bottom: 5px; }
+        .car-title { font-size: 20px; font-weight: 600; margin-bottom: 10px; }
+        .car-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .car-price { font-size: 18px; font-weight: 700; color: #2ecc71; }
+        .car-stock { font-size: 13px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">DIAMOND<span>RP</span></div>
+        <div class="nav-right">
+            <div class="wallet-info" id="user-wallet">Peníze: $100,000</div>
+            <button class="btn btn-admin" id="admin-toggle-btn" onclick="toggleAdminMode()">
+                <i class="fa-solid fa-lock"></i> Admin Mód
+            </button>
+            <button class="btn btn-discord" id="discord-btn" onclick="simulatedDiscordLogin()">
+                <i class="fa-brands fa-discord"></i> <span id="login-text">Přihlásit přes Discord</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div id="admin-panel">
+            <h2 style="margin-bottom: 20px; color: var(--danger);"><i class="fa-solid fa-shield-halved"></i> Administrace Serveru</h2>
+            <div class="admin-grid">
+                
+                <div>
+                    <h3 style="margin-bottom: 15px;">Přidat nové vozidlo</h3>
+                    <form id="add-car-form" onsubmit="addNewCar(event)">
+                        <div class="form-group">
+                            <label>Název vozidla</label>
+                            <input type="text" id="car-name" placeholder="Např. BMW M5 F90" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kategorie</label>
+                            <select id="car-cat">
+                                <option value="Sportovní">Sportovní</option>
+                                <option value="SUV">SUV</option>
+                                <option value="Superauta">Superauta</option>
+                                <option value="Klasiky">Klasiky</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>URL Obrázku</label>
+                            <input type="url" id="car-img" placeholder="https://url-obrazku.cz/auto.jpg" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cena ($)</label>
+                            <input type="number" id="car-price" placeholder="50000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Množství na skladě</label>
+                            <input type="number" id="car-stock" placeholder="3" required>
+                        </div>
+                        <button type="submit" class="btn btn-submit"><i class="fa-solid fa-plus"></i> Vystavit do obchodu</button>
+                    </form>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom: 15px;">Ekonomická Konzole</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">
+                        Příkazy: <code>/add money {jméno} {částka}</code> nebo <code>/delete money {jméno} {částka}</code>
+                    </p>
+                    <div class="console-box">
+                        <div class="console-output" id="console-log">
+                            [Systém]: Přihlášen jako administrátor. Konzole aktivní.
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <input type="text" id="console-input" placeholder="Zadej příkaz a stiskni Enter..." onkeydown="handleConsole(event)">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="shop-header">
+            <h2><i class="fa-solid fa-car"></i> Kardealer / Obchod s vozidly</h2>
+            <div class="categories">
+                <button class="cat-btn active" onclick="filterCategory('Vše')">Vše</button>
+                <button class="cat-btn" onclick="filterCategory('Sportovní')">Sportovní</button>
+                <button class="cat-btn" onclick="filterCategory('SUV')">SUV</button>
+                <button class="cat-btn" onclick="filterCategory('Superauta')">Superauta</button>
+                <button class="cat-btn" onclick="filterCategory('Klasiky')">Klasiky</button>
+            </div>
+        </div>
+
+        <div class="car-grid" id="cars-container"></div>
+
+    </div>
+
+    <script>
+        // --- KONFIGURACE ADMIN KÓDU ---
+        const SECRET_ADMIN_CODE = "RPAdmin2026"; // Tady si můžeš změnit heslo!
+
+        let defaultCars = [
+            { name: "Audi RS6 Avant", category: "Sportovní", price: 185000, stock: 2, img: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=500&q=80" },
+            { name: "Mercedes G63 AMG", category: "SUV", price: 250000, stock: 4, img: "https://images.unsplash.com/photo-1520050206274-a1ae446cb3cc?auto=format&fit=crop&w=500&q=80" }
+        ];
+
+        let cars = JSON.parse(localStorage.getItem('rp_cars')) || defaultCars;
+        let userMoney = parseInt(localStorage.getItem('rp_money')) || 100000;
+        let isAdmin = false;
+        let activeCategory = 'Vše';
+
+        updateWalletDisplay();
+        renderCars();
+
+        function simulatedDiscordLogin() {
+            const btnText = document.getElementById('login-text');
+            const discordBtn = document.getElementById('discord-btn');
+            btnText.innerText = "Přihlašování...";
+            setTimeout(() => {
+                btnText.innerText = "Admin_User#1337";
+                discordBtn.style.background = "#2ed573";
+            }, 1000);
+        }
+
+        // --- ZABEZPEČENÉ PŘEPÍNÁNÍ ADMIN MÓDU ---
+        function toggleAdminMode() {
+            const panel = document.getElementById('admin-panel');
+            const btn = document.getElementById('admin-toggle-btn');
+
+            if (!isAdmin) {
+                // Vyžadování hesla před otevřením
+                let enterCode = prompt("Zadej tajný Admin Kód pro přístup:");
+                
+                if (enterCode === SECRET_ADMIN_CODE) {
+                    isAdmin = true;
+                    panel.style.display = 'block';
+                    btn.classList.add('active');
+                    btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Zavřít Admin';
+                    alert("Přístup povolen!");
+                } else if (enterCode !== null) {
+                    alert("Nesprávný kód! Přístup odepřen.");
+                }
+            } else {
+                // Pokud už admin je, tak ho jednoduše odhlásíme/zavřeme panel
+                isAdmin = false;
+                panel.style.display = 'none';
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fa-solid fa-lock"></i> Admin Mód';
+            }
+        }
+
+        function handleConsole(event) {
+            if (event.key === 'Enter') {
+                const inputEl = document.getElementById('console-input');
+                const command = inputEl.value.trim();
+                inputEl.value = '';
+
+                if (!command) return;
+                logToConsole(`> ${command}`);
+
+                const addMatch = command.match(/^\/add\s+money\s+(\w+)\s+(\d+)$/i);
+                const deleteMatch = command.match(/^\/delete\s+money\s+(\w+)\s+(\d+)$/i);
+
+                if (addMatch) {
+                    const user = addMatch[1];
+                    const amount = parseInt(addMatch[2]);
+                    userMoney += amount;
+                    saveData();
+                    updateWalletDisplay();
+                    logToConsole(`[Ekonomika]: Hráči ${user} přičteno $${amount.toLocaleString()}.`);
+                } 
+                else if (deleteMatch) {
+                    const user = deleteMatch[1];
+                    const amount = parseInt(deleteMatch[2]);
+                    userMoney -= amount;
+                    if(userMoney < 0) userMoney = 0;
+                    saveData();
+                    updateWalletDisplay();
+                    logToConsole(`[Ekonomika]: Hráči ${user} odebráno $${amount.toLocaleString()}.`);
+                } 
+                else {
+                    logToConsole(`[Chyba]: Neznámý příkaz.`);
+                }
+            }
+        }
+
+        function logToConsole(text) {
+            const consoleLog = document.getElementById('console-log');
+            consoleLog.innerHTML += `<div>${text}</div>`;
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+        }
+
+        function addNewCar(event) {
+            event.preventDefault();
+            const name = document.getElementById('car-name').value;
+            const category = document.getElementById('car-cat').value;
+            const img = document.getElementById('car-img').value;
+            const price = parseInt(document.getElementById('car-price').value);
+            const stock = parseInt(document.getElementById('car-stock').value);
+
+            cars.push({ name, category, img, price, stock });
+            saveData();
+            renderCars();
+            logToConsole(`[Katalog]: Vozidlo ${name} bylo přidáno.`);
+            document.getElementById('add-car-form').reset();
+        }
+
+        function renderCars() {
+            const container = document.getElementById('cars-container');
+            container.innerHTML = '';
+            const filteredCars = activeCategory === 'Vše' ? cars : cars.filter(c => c.category === activeCategory);
+
+            if(filteredCars.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Žádná auta v této kategorii.</p>`;
+                return;
+            }
+
+            filteredCars.forEach(car => {
+                const card = document.createElement('div');
+                card.className = 'car-card';
+                card.innerHTML = `
+                    <img src="${car.img}" class="car-img" onerror="this.src='https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=500&q=80'">
+                    <div class="car-info">
+                        <div class="car-category">${car.category}</div>
+                        <div class="car-title">${car.name}</div>
+                        <div class="car-footer">
+                            <div class="car-price">$${car.price.toLocaleString()}</div>
+                            <div class="car-stock">Skladem: <strong>${car.stock} ks</strong></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterCategory(category) {
+            activeCategory = category;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText === category) btn.classList.add('active');
+            });
+            renderCars();
+        }
+
+        function updateWalletDisplay() { document.getElementById('user-wallet').innerText = `Peníze: $${userMoney.toLocaleString()}`; }
+        function saveData() { localStorage.setItem('rp_cars', JSON.stringify(cars)); localStorage.setItem('rp_money', userMoney); }
+    </script>
+</body>
+</html>
