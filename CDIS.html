@@ -12,6 +12,7 @@
             --text-color: #333333;
             --danger-color: #d9534f;
             --success-color: #5cb85c;
+            --admin-color: #7928ca;
         }
 
         * {
@@ -30,10 +31,9 @@
             min-height: 100vh;
         }
 
-        /* Společné kontejnery */
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             background: var(--card-bg);
             padding: 30px;
             border-radius: 12px;
@@ -43,7 +43,6 @@
 
         .hidden { display: none !important; }
 
-        /* Logo a hlavička */
         .logo-container {
             text-align: center;
             margin-bottom: 25px;
@@ -53,13 +52,12 @@
             height: auto;
         }
 
-        h2 {
+        h2, h3 {
             text-align: center;
             margin-bottom: 20px;
             color: var(--primary-color);
         }
 
-        /* Formuláře */
         .form-group {
             margin-bottom: 15px;
         }
@@ -113,7 +111,6 @@
             text-decoration: underline;
         }
 
-        /* Hlavní rozhraní aplikace */
         .app-header {
             display: flex;
             justify-content: space-between;
@@ -135,24 +132,30 @@
         /* Navigace záložek */
         .tabs {
             display: flex;
-            gap: 10px;
+            gap: 5px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         .tab {
             flex: 1;
-            padding: 10px;
+            min-width: 100px;
+            padding: 10px 5px;
             text-align: center;
             background: #e9ecef;
             cursor: pointer;
             border-radius: 6px;
             font-weight: bold;
+            font-size: 14px;
         }
         .tab.active {
             background: var(--primary-color);
             color: white;
         }
+        .tab.tab-admin-only.active {
+            background: var(--admin-color);
+        }
 
-        /* Příspěvky */
+        /* Příspěvky a Chat */
         .post {
             background: #f8f9fa;
             border-left: 5px solid var(--primary-color);
@@ -162,7 +165,8 @@
             position: relative;
         }
         .post.vyluka { border-left-color: #fd7e14; }
-        .post-title { font-weight: bold; font-size: 18px; margin-bottom: 5px; }
+        .post.chat-msg { border-left-color: #20c997; }
+        .post-title { font-weight: bold; font-size: 17px; margin-bottom: 5px; }
         .post-meta { font-size: 12px; color: #777; margin-bottom: 10px; }
         .post-content { line-height: 1.5; font-size: 15px; }
         
@@ -173,10 +177,10 @@
             background: var(--danger-color);
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .admin-actions {
@@ -186,11 +190,39 @@
             border-radius: 8px;
             border: 1px dashed var(--primary-color);
         }
+
+        /* Tabulky a Admin Sekce */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .admin-table th, .admin-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .admin-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .ban-btn {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            width: auto;
+        }
+        .ban-btn:hover { background-color: #c9302c; }
     </style>
 </head>
 <body>
 
-    <!-- 1. PŘIHLAŠOVACÍ OBRAZOVKA -->
     <div id="login-section" class="container">
         <div class="logo-container">
             <img src="IMG_3643.png" alt="CDIS Logo" class="logo-img">
@@ -210,7 +242,6 @@
         </div>
     </div>
 
-    <!-- 2. REGISTRAČNÍ OBRAZOVKA -->
     <div id="register-section" class="container hidden">
         <div class="logo-container">
             <img src="IMG_3643.png" alt="CDIS Logo" class="logo-img">
@@ -230,7 +261,6 @@
         </div>
     </div>
 
-    <!-- 3. HLAVNÍ NÁSTĚNKA APLIKACE -->
     <div id="app-section" class="container hidden">
         <div class="app-header">
             <div>
@@ -242,12 +272,10 @@
             </div>
         </div>
 
-        <!-- Tlačítko pro aktivaci Admin módu -->
         <button id="admin-auth-btn" onclick="promptAdminCode()" class="btn-secondary" style="margin-bottom: 15px;">Vstoupit do Admin Panelu</button>
 
-        <!-- Sekce pro přidávání příspěvků (Admin) -->
         <div id="admin-panel" class="admin-actions hidden">
-            <h3 style="margin-bottom: 10px; color: var(--primary-color);">Nový příspěvek (Admin)</h3>
+            <h3 style="margin-bottom: 10px; color: var(--primary-color); text-align: left;">Nový příspěvek (Admin)</h3>
             <div class="form-group">
                 <label>Typ příspěvku</label>
                 <select id="post-type">
@@ -266,13 +294,48 @@
             <button onclick="createPost()">Publikovat</button>
         </div>
 
-        <!-- Záložky -->
         <div class="tabs">
             <div id="tab-aktuality" class="tab active" onclick="switchTab('aktuality')">Aktuality</div>
             <div id="tab-vyluky" class="tab" onclick="switchTab('vyluky')">Výluky</div>
+            <div id="tab-chat" class="tab" onclick="switchTab('chat')">Chat</div>
+            <div id="tab-admin" class="tab tab-admin-only hidden" onclick="switchTab('admin')">⚠️ Admin Panel</div>
         </div>
 
-        <!-- Výpis příspěvků -->
+        <div id="chat-form-container" class="hidden" style="margin-bottom: 20px; background: #e8f7f3; padding: 15px; border-radius: 8px;">
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label style="color: #0f5132;">Napsat do chatu:</label>
+                <textarea id="chat-message-input" rows="2" placeholder="Napište zprávu pro ostatní..."></textarea>
+            </div>
+            <button onclick="sendChatMessage()" style="background-color: #20c997;">Odeslat zprávu</button>
+        </div>
+
+        <div id="admin-category-section" class="hidden">
+            <h3 style="color: var(--admin-color); text-align: left; border-bottom: 2px solid var(--admin-color); padding-bottom: 5px;">Správa uživatelů (Banování)</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>E-mail Registrovaného</th>
+                        <th>Akce</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-users-list">
+                    </tbody>
+            </table>
+
+            <h3 style="color: var(--admin-color); text-align: left; border-bottom: 2px solid var(--admin-color); padding-bottom: 5px; margin-top: 20px;">Přehled Chatu (Kdo napsal co)</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Odesílatel</th>
+                        <th>Zpráva</th>
+                        <th>Čas</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-chat-log">
+                    </tbody>
+            </table>
+        </div>
+
         <div id="posts-container"></div>
     </div>
 
@@ -281,12 +344,19 @@
         const defaultPosts = [
             { id: 1, type: 'aktuality', title: 'Vítejte v informačním systému CDIS', content: 'Tento systém slouží pro poskytování aktuálních informací a hlášení o výlukách v naší dopravní síti.', date: '11. 06. 2026' }
         ];
+        
+        const defaultChat = [
+            { id: 101, user: 'Dispecink@cdis.cz', message: 'Zdravím všechny řidiče na značkách!', date: '11. 06. 2026 19:50' }
+        ];
 
         if (!localStorage.getItem('cdis_users')) {
             localStorage.setItem('cdis_users', JSON.stringify([]));
         }
         if (!localStorage.getItem('cdis_posts')) {
             localStorage.setItem('cdis_posts', JSON.stringify(defaultPosts));
+        }
+        if (!localStorage.getItem('cdis_chat')) {
+            localStorage.setItem('cdis_chat', JSON.stringify(defaultChat));
         }
 
         let currentUser = null;
@@ -348,9 +418,11 @@
             isAdmin = false;
             document.getElementById('admin-badge').classList.add('hidden');
             document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('tab-admin').classList.add('hidden');
             document.getElementById('admin-auth-btn').classList.remove('hidden');
             document.getElementById('login-email').value = '';
             document.getElementById('login-pin').value = '';
+            switchTab('aktuality');
             switchView('login-section');
         }
 
@@ -360,8 +432,9 @@
                 isAdmin = true;
                 document.getElementById('admin-badge').classList.remove('hidden');
                 document.getElementById('admin-panel').classList.remove('hidden');
+                document.getElementById('tab-admin').classList.remove('hidden'); // Odemčení záložky Admin Panel
                 document.getElementById('admin-auth-btn').classList.add('hidden');
-                alert('Admin práva aktivována!');
+                alert('Admin práva aktivována! Byla vám odemčena skrytá kategorie Admin.');
                 renderPosts();
             } else {
                 alert('Nesprávný kód!');
@@ -372,7 +445,25 @@
             currentTab = tabName;
             document.getElementById('tab-aktuality').classList.remove('active');
             document.getElementById('tab-vyluky').classList.remove('active');
+            document.getElementById('tab-chat').classList.remove('active');
+            document.getElementById('tab-admin').classList.remove('active');
+            
             document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Ovládání zobrazení formuláře pro Chat
+            if (tabName === 'chat') {
+                document.getElementById('chat-form-container').classList.remove('hidden');
+            } else {
+                document.getElementById('chat-form-container').classList.add('hidden');
+            }
+
+            // Ovládání zobrazení Admin Kategorie
+            if (tabName === 'admin' && isAdmin) {
+                document.getElementById('admin-category-section').classList.remove('hidden');
+            } else {
+                document.getElementById('admin-category-section').classList.add('hidden');
+            }
+
             renderPosts();
         }
 
@@ -380,33 +471,149 @@
             const container = document.getElementById('posts-container');
             container.innerHTML = '';
             
-            let posts = JSON.parse(localStorage.getItem('cdis_posts'));
-            let filteredPosts = posts.filter(p => p.type === currentTab);
-
-            if (filteredPosts.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:#777; margin-top:20px;">V této kategorii nejsou žádné příspěvky.</p>`;
+            // Pokud jsme v kategorii Admin, vykreslíme tabulky správy a skryjeme normální příspěvky
+            if (currentTab === 'admin') {
+                renderAdminDashboard();
                 return;
             }
 
-            filteredPosts.reverse().forEach(post => {
-                const postEl = document.createElement('div');
-                postEl.className = `post ${post.type === 'vyluky' ? 'vyluka' : ''}`;
-                
-                let deleteButton = '';
-                if (isAdmin) {
-                    deleteButton = `<button class="delete-btn" onclick="deletePost(${post.id})">Smazat</button>`;
+            // Pokud jsme v klasických příspěvcích (Aktuality / Výluky)
+            if (currentTab === 'aktuality' || currentTab === 'vyluky') {
+                let posts = JSON.parse(localStorage.getItem('cdis_posts'));
+                let filteredPosts = posts.filter(p => p.type === currentTab);
+
+                if (filteredPosts.length === 0) {
+                    container.innerHTML = `<p style="text-align:center; color:#777; margin-top:20px;">V této kategorii nejsou žádné příspěvky.</p>`;
+                    return;
                 }
 
-                postEl.innerHTML = `
-                    <div class="post-title">${escapeHTML(post.title)}</div>
-                    <div class="post-meta">Publikováno: ${post.date}</div>
-                    <div class="post-content">${escapeHTML(post.content).replace(/\n/g, '<br>')}</div>
-                    ${deleteButton}
-                `;
-                container.appendChild(postEl);
-            });
+                filteredPosts.reverse().forEach(post => {
+                    const postEl = document.createElement('div');
+                    postEl.className = `post ${post.type === 'vyluky' ? 'vyluka' : ''}`;
+                    
+                    let deleteButton = '';
+                    if (isAdmin) {
+                        deleteButton = `<button class="delete-btn" onclick="deletePost(${post.id})">Smazat</button>`;
+                    }
+
+                    postEl.innerHTML = `
+                        <div class="post-title">${escapeHTML(post.title)}</div>
+                        <div class="post-meta">Publikováno: ${post.date}</div>
+                        <div class="post-content">${escapeHTML(post.content).replace(/\n/g, '<br>')}</div>
+                        ${deleteButton}
+                    `;
+                    container.appendChild(postEl);
+                });
+            } 
+            
+            // Pokud jsme v CHATU
+            else if (currentTab === 'chat') {
+                let chatMsgs = JSON.parse(localStorage.getItem('cdis_chat'));
+
+                if (chatMsgs.length === 0) {
+                    container.innerHTML = `<p style="text-align:center; color:#777; margin-top:20px;">Chat je prázdný. Napište první zprávu!</p>`;
+                    return;
+                }
+
+                chatMsgs.reverse().forEach(msg => {
+                    const postEl = document.createElement('div');
+                    postEl.className = `post chat-msg`;
+                    
+                    let deleteButton = '';
+                    if (isAdmin) {
+                        deleteButton = `<button class="delete-btn" onclick="deleteChatMessage(${msg.id})">Smazat zprávu</button>`;
+                    }
+
+                    postEl.innerHTML = `
+                        <div class="post-title" style="color: #0f5132; font-size: 15px;">👤 ${escapeHTML(msg.user)}</div>
+                        <div class="post-meta">Čas: ${msg.date}</div>
+                        <div class="post-content" style="font-weight: 500;">${escapeHTML(msg.message)}</div>
+                        ${deleteButton}
+                    `;
+                    container.appendChild(postEl);
+                });
+            }
         }
 
+        // Funkce pro odeslání zprávy do chatu uživatelem
+        function sendChatMessage() {
+            const msgInput = document.getElementById('chat-message-input');
+            const msgText = msgInput.value.trim();
+
+            if (!msgText) return;
+
+            let chatMsgs = JSON.parse(localStorage.getItem('cdis_chat'));
+            const today = new Date();
+            const formattedDate = `${String(today.getDate()).padStart(2, '0')}. ${String(today.getMonth() + 1).padStart(2, '0')}. ${today.getFullYear()} ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}`;
+
+            chatMsgs.push({
+                id: Date.now(),
+                user: currentUser,
+                message: msgText,
+                date: formattedDate
+            });
+
+            localStorage.setItem('cdis_chat', JSON.stringify(chatMsgs));
+            msgInput.value = '';
+            renderPosts();
+        }
+
+        // Vykreslení dat uvnitř speciálního Admin Panelu
+        function renderAdminDashboard() {
+            if (!isAdmin) return;
+
+            // 1. Výpis registrovaných uživatelů k zabanování
+            const usersTableBody = document.getElementById('admin-users-list');
+            usersTableBody.innerHTML = '';
+            let users = JSON.parse(localStorage.getItem('cdis_users'));
+
+            if (users.length === 0) {
+                usersTableBody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#777;">Žádní registrovaní uživatelé.</td></tr>`;
+            } else {
+                users.forEach(u => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><b>${escapeHTML(u.email)}</b></td>
+                        <td><button class="ban-btn" onclick="banUser('${u.email}')">Zabanovat (Smazat)</button></td>
+                    `;
+                    usersTableBody.appendChild(row);
+                });
+            }
+
+            // 2. Výpis logu chatu (Kdo co napsal)
+            const chatLogBody = document.getElementById('admin-chat-log');
+            chatLogBody.innerHTML = '';
+            let chatMsgs = JSON.parse(localStorage.getItem('cdis_chat'));
+
+            if (chatMsgs.length === 0) {
+                chatLogBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#777;">V chatu nejsou žádné zprávy.</td></tr>`;
+            } else {
+                chatMsgs.slice().reverse().forEach(msg => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="color:#0f5132;"><b>${escapeHTML(msg.user)}</b></td>
+                        <td>${escapeHTML(msg.message)}</td>
+                        <td style="color:#666; font-size:12px;">${msg.date}</td>
+                    `;
+                    chatLogBody.appendChild(row);
+                });
+            }
+        }
+
+        // Akce zabanování/smazání uživatele adminem
+        function banUser(email) {
+            if (!isAdmin) return;
+            if (confirm(`Opravdu chcete kompletně smazat a zabanovat uživatele ${email}?`)) {
+                let users = JSON.parse(localStorage.getItem('cdis_users'));
+                users = users.filter(u => u.email.toLowerCase() !== email.toLowerCase());
+                localStorage.setItem('cdis_users', JSON.stringify(users));
+                
+                alert(`Uživatel ${email} byl odstraněn ze systému.`);
+                renderAdminDashboard();
+            }
+        }
+
+        // Mazání příspěvků z aktualit/výluk
         function createPost() {
             if (!isAdmin) return;
 
@@ -423,15 +630,13 @@
             const today = new Date();
             const formattedDate = `${String(today.getDate()).padStart(2, '0')}. ${String(today.getMonth() + 1).padStart(2, '0')}. ${today.getFullYear()}`;
 
-            const newPost = {
+            posts.push({
                 id: Date.now(),
                 type: type,
                 title: title,
                 content: content,
                 date: formattedDate
-            };
-
-            posts.push(newPost);
+            });
             localStorage.setItem('cdis_posts', JSON.stringify(posts));
 
             document.getElementById('post-title').value = '';
@@ -447,6 +652,16 @@
                 let posts = JSON.parse(localStorage.getItem('cdis_posts'));
                 posts = posts.filter(p => p.id !== id);
                 localStorage.setItem('cdis_posts', JSON.stringify(posts));
+                renderPosts();
+            }
+        }
+
+        function deleteChatMessage(id) {
+            if (!isAdmin) return;
+            if (confirm('Opravdu chcete tuto zprávu z chatu smazat?')) {
+                let chatMsgs = JSON.parse(localStorage.getItem('cdis_chat'));
+                chatMsgs = chatMsgs.filter(m => m.id !== id);
+                localStorage.setItem('cdis_chat', JSON.stringify(chatMsgs));
                 renderPosts();
             }
         }
