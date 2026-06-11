@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDIS - Informační Systém</title>
+    <style>
+        :root {
+            --primary-color: #0070c0;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --danger-color: #d9534f;
+            --success-color: #5cb85c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Společné kontejnery */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 20px auto;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Logo a hlavička */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .logo-img {
+            max-width: 220px;
+            height: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        /* Formuláře */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #005694; }
+        
+        .btn-danger { background-color: var(--danger-color); }
+        .btn-danger:hover { background-color: #c9302c; }
+        
+        .btn-secondary { background-color: #6c757d; margin-top: 10px; }
+        .btn-secondary:hover { background-color: #5a6268; }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+        .switch-link span {
+            color: var(--primary-color);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Hlavní rozhraní aplikace */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .user-info { font-size: 14px; }
+        .admin-badge {
+            background: #ffc107;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Navigace záložek */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: #e9ecef;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Příspěvky */
+        .post {
+            background: #f8f9fa;
+            border-left: 5px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .post.vyluka { border-left-color: #fd7e14; }
+        .post-title { font-weight: bold; font-size: 18px; margin-bottom: 5px; }
+        .post-meta { font-size: 12px; color: #777; margin-bottom: 10px; }
+        .post-content { line-height: 1.5; font-size: 15px; }
+        
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .admin-actions {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e2f0fe;
+            border-radius: 8px;
+            border: 1px dashed var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. PŘIHLAŠOVACÍ OBRAZOVKA -->
+    <div id="login-section" class="container">
+        <div class="logo-container">
+            <img src="IMG_3643.png" alt="CDIS Logo" class="logo-img">
+        </div>
+        <h2>Přihlášení do systému</h2>
+        <div class="form-group">
+            <label>E-mail (Uživatelské jméno)</label>
+            <input type="email" id="login-email" placeholder="jmeno@email.cz">
+        </div>
+        <div class="form-group">
+            <label>PIN kód</label>
+            <input type="password" id="login-pin" placeholder="••••" maxlength="6">
+        </div>
+        <button onclick="handleLogin()">Přihlásit se</button>
+        <div class="switch-link">
+            Nemáte účet? <span onclick="switchView('register-section')">Zaregistrujte se</span>
+        </div>
+    </div>
+
+    <!-- 2. REGISTRAČNÍ OBRAZOVKA -->
+    <div id="register-section" class="container hidden">
+        <div class="logo-container">
+            <img src="IMG_3643.png" alt="CDIS Logo" class="logo-img">
+        </div>
+        <h2>Nová registrace</h2>
+        <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" id="reg-email" placeholder="jmeno@email.cz">
+        </div>
+        <div class="form-group">
+            <label>Zvolte si PIN kód</label>
+            <input type="password" id="reg-pin" placeholder="Např. 1234" maxlength="6">
+        </div>
+        <button onclick="handleRegister()">Vytvořit účet</button>
+        <div class="switch-link">
+            Již máte účet? <span onclick="switchView('login-section')">Přihlaste se</span>
+        </div>
+    </div>
+
+    <!-- 3. HLAVNÍ NÁSTĚNKA APLIKACE -->
+    <div id="app-section" class="container hidden">
+        <div class="app-header">
+            <div>
+                <img src="IMG_3643.png" alt="CDIS Logo" style="max-width: 100px; display: block; margin-bottom: 5px;">
+                <div class="user-info">Uživatel: <b id="current-user-display">---</b> <span id="admin-badge" class="admin-badge hidden">ADMIN</span></div>
+            </div>
+            <div>
+                <button onclick="handleLogout()" class="btn-danger" style="padding: 6px 12px; font-size: 13px; width: auto;">Odhlásit</button>
+            </div>
+        </div>
+
+        <!-- Tlačítko pro aktivaci Admin módu -->
+        <button id="admin-auth-btn" onclick="promptAdminCode()" class="btn-secondary" style="margin-bottom: 15px;">Vstoupit do Admin Panelu</button>
+
+        <!-- Sekce pro přidávání příspěvků (Admin) -->
+        <div id="admin-panel" class="admin-actions hidden">
+            <h3 style="margin-bottom: 10px; color: var(--primary-color);">Nový příspěvek (Admin)</h3>
+            <div class="form-group">
+                <label>Typ příspěvku</label>
+                <select id="post-type">
+                    <option value="aktuality">Aktualita</option>
+                    <option value="vyluky">Výluka</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Titulek</label>
+                <input type="text" id="post-title" placeholder="Např. Výluka na lince 401">
+            </div>
+            <div class="form-group">
+                <label>Obsah zprávy</label>
+                <textarea id="post-content" rows="3" placeholder="Zde napište podrobnosti..."></textarea>
+            </div>
+            <button onclick="createPost()">Publikovat</button>
+        </div>
+
+        <!-- Záložky -->
+        <div class="tabs">
+            <div id="tab-aktuality" class="tab active" onclick="switchTab('aktuality')">Aktuality</div>
+            <div id="tab-vyluky" class="tab" onclick="switchTab('vyluky')">Výluky</div>
+        </div>
+
+        <!-- Výpis příspěvků -->
+        <div id="posts-container"></div>
+    </div>
+
+    <script>
+        // Výchozí ukázková data
+        const defaultPosts = [
+            { id: 1, type: 'aktuality', title: 'Vítejte v informačním systému CDIS', content: 'Tento systém slouží pro poskytování aktuálních informací a hlášení o výlukách v naší dopravní síti.', date: '11. 06. 2026' }
+        ];
+
+        if (!localStorage.getItem('cdis_users')) {
+            localStorage.setItem('cdis_users', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('cdis_posts')) {
+            localStorage.setItem('cdis_posts', JSON.stringify(defaultPosts));
+        }
+
+        let currentUser = null;
+        let isAdmin = false;
+        let currentTab = 'aktuality';
+
+        function switchView(viewId) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('register-section').classList.add('hidden');
+            document.getElementById('app-section').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        function handleRegister() {
+            const email = document.getElementById('reg-email').value.trim();
+            const pin = document.getElementById('reg-pin').value.trim();
+
+            if (!email || !pin) {
+                alert('Vyplňte prosím e-mail a PIN kód.');
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('cdis_users'));
+            const userExists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
+            
+            if (userExists) {
+                alert('Tento e-mail už je v systému zaregistrovaný!');
+                return;
+            }
+
+            users.push({ email: email, pin: pin });
+            localStorage.setItem('cdis_users', JSON.stringify(users));
+            
+            alert('Registrace proběhla úspěšně! Nyní se můžete přihlásit.');
+            switchView('login-section');
+            document.getElementById('login-email').value = email;
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value.trim();
+            const pin = document.getElementById('login-pin').value.trim();
+
+            let users = JSON.parse(localStorage.getItem('cdis_users'));
+            const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.pin === pin);
+
+            if (!user) {
+                alert('Nesprávný e-mail nebo PIN kód!');
+                return;
+            }
+
+            currentUser = user.email;
+            document.getElementById('current-user-display').innerText = currentUser;
+            switchView('app-section');
+            renderPosts();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            isAdmin = false;
+            document.getElementById('admin-badge').classList.add('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('admin-auth-btn').classList.remove('hidden');
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-pin').value = '';
+            switchView('login-section');
+        }
+
+        function promptAdminCode() {
+            const code = prompt('Zadejte tajný kód pro Admin práva:');
+            if (code === '776171') {
+                isAdmin = true;
+                document.getElementById('admin-badge').classList.remove('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+                document.getElementById('admin-auth-btn').classList.add('hidden');
+                alert('Admin práva aktivována!');
+                renderPosts();
+            } else {
+                alert('Nesprávný kód!');
+            }
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.getElementById('tab-aktuality').classList.remove('active');
+            document.getElementById('tab-vyluky').classList.remove('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+            renderPosts();
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            container.innerHTML = '';
+            
+            let posts = JSON.parse(localStorage.getItem('cdis_posts'));
+            let filteredPosts = posts.filter(p => p.type === currentTab);
+
+            if (filteredPosts.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:#777; margin-top:20px;">V této kategorii nejsou žádné příspěvky.</p>`;
+                return;
+            }
+
+            filteredPosts.reverse().forEach(post => {
+                const postEl = document.createElement('div');
+                postEl.className = `post ${post.type === 'vyluky' ? 'vyluka' : ''}`;
+                
+                let deleteButton = '';
+                if (isAdmin) {
+                    deleteButton = `<button class="delete-btn" onclick="deletePost(${post.id})">Smazat</button>`;
+                }
+
+                postEl.innerHTML = `
+                    <div class="post-title">${escapeHTML(post.title)}</div>
+                    <div class="post-meta">Publikováno: ${post.date}</div>
+                    <div class="post-content">${escapeHTML(post.content).replace(/\n/g, '<br>')}</div>
+                    ${deleteButton}
+                `;
+                container.appendChild(postEl);
+            });
+        }
+
+        function createPost() {
+            if (!isAdmin) return;
+
+            const title = document.getElementById('post-title').value.trim();
+            const content = document.getElementById('post-content').value.trim();
+            const type = document.getElementById('post-type').value;
+
+            if (!title || !content) {
+                alert('Vyplňte titulek i obsah zprávy.');
+                return;
+            }
+
+            let posts = JSON.parse(localStorage.getItem('cdis_posts'));
+            const today = new Date();
+            const formattedDate = `${String(today.getDate()).padStart(2, '0')}. ${String(today.getMonth() + 1).padStart(2, '0')}. ${today.getFullYear()}`;
+
+            const newPost = {
+                id: Date.now(),
+                type: type,
+                title: title,
+                content: content,
+                date: formattedDate
+            };
+
+            posts.push(newPost);
+            localStorage.setItem('cdis_posts', JSON.stringify(posts));
+
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+
+            switchTab(type);
+            alert('Příspěvek úspěšně publikován.');
+        }
+
+        function deletePost(id) {
+            if (!isAdmin) return;
+            if (confirm('Opravdu chcete tento příspěvek smazat?')) {
+                let posts = JSON.parse(localStorage.getItem('cdis_posts'));
+                posts = posts.filter(p => p.id !== id);
+                localStorage.setItem('cdis_posts', JSON.stringify(posts));
+                renderPosts();
+            }
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
